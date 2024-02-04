@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin:'https://map-final-git-main-cs50x-rgb.vercel.app',
+    origin:'https://map-final.vercel.app',
     methods: ["GET", "POST", "PUT", "DELETE"],
     optionsSuccessStatus: 200,
     credentials: true,
