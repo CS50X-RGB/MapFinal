@@ -1,0 +1,23 @@
+{
+  "short_name": "Map-O-Share",
+  "name": "Map-O-Share , Share at click",
+  "description": "A coonecting application that is aimed to connect users on the go connect with each other and share resuousces in case one runs out of it.",
+  "start_url": "https://map-0-share.vercel.app/register",
+  "display": "standalone",
+  "theme_color": "#222436",
+  "background_color": "#121317",
+  "icons": [
+    {
+      "src": "logo2.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "crossorigin" : "anonymous"
+    },
+    {
+      "src":"logo2.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "crossorigin": "anonymous"
+    }
+  ]
+}

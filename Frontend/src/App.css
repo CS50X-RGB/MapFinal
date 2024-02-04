@@ -1,0 +1,29 @@
+.box {
+  box-shadow: -63px 6px 6px #82AAFF;
+}
+
+
+
+@media only screen and (min-width: 312px) and (max-width: 768px) {
+  .box {
+    box-shadow: -20px 3px 3px #82AAFF;
+  }
+}
+
+
+.box2 {
+  box-shadow: 68px 6px 6px #82AAFF;
+}
+
+
+
+@media only screen and (min-width: 312px) and (max-width: 768px) {
+  .box2{
+    box-shadow: 20px 3px 3px #82AAFF;
+  }
+}
+
+
+.radial {
+  background: radial-gradient(circle,#82AAFF,#222436);
+}
