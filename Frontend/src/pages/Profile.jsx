@@ -80,7 +80,7 @@ function Profile() {
   const handleUpdateDetails = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:3005/api/v1/users/resetDetails",
+        "https://maposhare.onrender.com/api/v1/users/resetDetails",
         {
           name: edit ? name : undefined,
           email: editEmail ? email : undefined,

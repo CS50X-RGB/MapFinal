@@ -13,7 +13,7 @@ export const Prices = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3005/api/v1/data/fetchPrices",
+          "https://maposhare.onrender.com/api/v1/data/fetchPrices",
           {
             headers: {
               "Content-Type": "application/json",

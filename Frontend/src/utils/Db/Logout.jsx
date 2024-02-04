@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const handleLogout = async () => {
   try {
-    const response = await axios.get("http://localhost:3005/api/v1/users/logout", {
+    const response = await axios.get("https://maposhare.onrender.com/api/v1/users/logout", {
       headers: {
         "Content-Type": "application/json",
       },

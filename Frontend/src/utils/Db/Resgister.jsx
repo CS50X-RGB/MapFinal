@@ -11,7 +11,7 @@ const RegisterAxios = async (
 ) => {
   try {
     const response = await axios.post(
-        "http://localhost:3005/api/v1/users/register",
+        "https://maposhare.onrender.com/api/v1/users/register",
         {
                 name,
                 email,

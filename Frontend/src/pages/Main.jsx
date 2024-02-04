@@ -152,7 +152,7 @@ function Main() {
       try {
         console.log("Hii");
         const response = await axios.post(
-          "http://localhost:3005/api/v1/notify/notify",
+          "https://maposhare.onrender.com/api/v1/notify/notify",
           {
             intersts: "all_drivers",
             title: `${d.name} Someone needs your help`,
@@ -176,7 +176,7 @@ function Main() {
     try {
       console.log("Hii");
       const response = await axios.post(
-        "http://localhost:3005/api/v1/notify/notify",
+        "https://maposhare.onrender.com/api/v1/notify/notify",
         {
           intersts: "all_drivers",
           title: `Sorry for the interuptions`,
@@ -197,7 +197,7 @@ function Main() {
   async function antiDriver() {
     try {
       const response = await axios.delete(
-        "http://localhost:3005/api/v1/location/deleteLoc",
+        "https://maposhare.onrender.com/api/v1/location/deleteLoc",
         {
           headers: {
             "Content-Length": "application/json",
@@ -213,7 +213,7 @@ function Main() {
   const driMode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3005/api/v1/location/updateLoc",
+        "https://maposhare.onrender.com/api/v1/location/updateLoc",
         {
           longitude: location.longitude,
           latitude: location.latitude,
@@ -236,7 +236,7 @@ function Main() {
   const getNeighbours = async (r) => {
     try {
       const response = await axios.get(
-        `http://localhost:3005/api/v1/location/nearby/${r}`,
+        `https://maposhare.onrender.com/api/v1/location/nearby/${r}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -334,7 +334,7 @@ function Main() {
       console.log(selectedDriver.userId);
       if (selectedDriver) {
         const response = await axios.put(
-          "http://localhost:3005/api/v1/users/UnsucessTrans",
+          "https://maposhare.onrender.com/api/v1/users/UnsucessTrans",
           {
             id: selectedDriver.userId,
           },
@@ -362,7 +362,7 @@ function Main() {
       console.log(selectedDriver.userId);
       if (selectedDriver) {
         const responseSuccess = await axios.put(
-          `http://localhost:3005/api/v1/users/sucessTrans`,
+          `https://maposhare.onrender.com/api/v1/users/sucessTrans`,
           {
             id: selectedDriver.userId,
           },
