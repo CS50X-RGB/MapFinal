@@ -20,7 +20,6 @@ function Profile() {
   const [editPhone, setEditPhone] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [imageUpdated, setImageUpdated] = useState(false);
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -168,19 +167,19 @@ function Profile() {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded border border-text p-2 text-xl text-back bg-text"
-                  />
+                    className="w-full flex flex-row justify-center items-center gap-4 rounded border border-text p-2 text-xl text-back bg-text"
+                  />  
                   <button
                     onClick={handleEditToggle}
-                    className="fill-text"
+                    className="fill-blue-500"
                     type="button"
                   >
-                    <FaPencilAlt className="w-[4rem]" />
+                    <FaPencilAlt size={34} />
                   </button>
                 </>
               ) : (
                 <>
-                  <span className="text-md md:text-2xl">{user.name}</span>
+                  <span className="text-md font-ostwald md:text-2xl">Hi! {user.name}</span>
                   <button
                     onClick={handleEditToggle}
                     className="fill-text"

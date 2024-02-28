@@ -112,7 +112,6 @@ export const ForgotPassword = async (req, res) => {
     const resetLink = `http://localhost:3000/resetPassword/${resetIdentifier}`;
     console.log(resetLink);
     sendEmail(user.email, `Click the following link to reset your password : ${resetLink}`);
-
     return res.status(200).json({
       success: true,
       message: `Password reset instructions sent to your email.Please check your inbox.`,
@@ -137,7 +136,7 @@ export const ResetPassword = async (req, res) => {
     });
     console.log(user);
     if (!user) {
-      return res.status(404).send({
+      return res.status(404).json({
         success: false,
         message: "Inavlid or expired reset link. Please try again",
       });
@@ -148,7 +147,7 @@ export const ResetPassword = async (req, res) => {
     console.log(re);
   } catch (error) {
     console.error(error);
-    res.status(404).send({
+    return res.status(500).json({
       success: false,
       message: "Internal server error. Please try again",
     })
@@ -159,14 +158,13 @@ export const resetDetails = async (req, res) => {
   try {
     const { name, email, phone, profilePic,dLNo } = req.body;
     const user = req.user;
-
+    
     if (!user) {
       return res.status(401).json({
         success: false,
         message: "User is not authorized",
       });
     }
-
     if (name && name !== user.name) {
       user.name = name;
     }
