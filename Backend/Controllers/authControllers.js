@@ -109,7 +109,7 @@ export const ForgotPassword = async (req, res) => {
     user.resetIdentifier = resetIdentifier;
     const re = await user.save();
     console.log(re);
-    const resetLink = `http://localhost:3000/resetPassword/${resetIdentifier}`;
+    const resetLink = `https://map-final.vercel.app/resetPassword/${resetIdentifier}`;
     console.log(resetLink);
     sendEmail(user.email, `Click the following link to reset your password : ${resetLink}`);
     return res.status(200).json({

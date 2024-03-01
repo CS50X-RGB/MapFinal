@@ -1,33 +1,33 @@
 import "../index.css";
-import logo3 from "./assets/bg.svg";
+import logo3 from "./assets/logo.svg";
 import bg from "./assets/bg.svg";
 import Example from "./Accordian.jsx";
+import { Link } from "react-router-dom";
 
-function App() {
+function LandingPage() {
   return (
     <>
       <div className="font-poppins">
-        <nav className="flex justify-right items-center bg-gray-800 p-4 relative">
+        <nav className="flex justify-right items-center bg-black p-4 relative">
+          <Link to={"/"}>
           <img
             src={logo3}
             alt="logo"
             className="absolute top-5 z-10 w-24 h-24"
           />
+          </Link>
           <ul className="flex absolute right-[1rem] top-5 z-10">
+            <Link to="/" className="text-white font-poppins text-lg mr-8">
+              Home
+            </Link>
             <li>
-              <a href="/" className="text-white font-poppins text-lg mr-8">
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="/register"
+              <Link
+                to="/register"
                 className="text-white font-poppins mr-8 text-lg"
               >
                 Register
-              </a>
+              </Link>
             </li>
-            <button></button>
           </ul>
           <img src={bg} alt="background" className="relative ml-auto z-4" />
           <div className="mb-4 flex flex-col absolute text-white left-[60%] top-[30%] transform translate-x-[-50%] translate-y-[-50%] justify-center items-center">
@@ -61,4 +61,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;
