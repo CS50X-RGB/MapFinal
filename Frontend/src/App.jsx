@@ -19,22 +19,22 @@ export default function App() {
           <Route path="/"  element={<Home/>}/>
           <Route path="/profile" element={<Profile/>} />
           <Route path="/main" element={<Main />} />
-          <Route path="/register" element={< Navigate to ="/login"/>} />
-          <Route path="/login" element={< Navigate to ="/login"/>} />
+          <Route path="/register" element={<Navigate to ="/login"/>} />
+          <Route path="/login" element={<Navigate to ="/login"/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/resetPassword/:resetIdentifier" element={<ResetPassword />} />
           <Route path="/rates" element={<Prices/>} />
         </>
       ) : (
         <>
-         <Route path="/"  element={<Home/>}/>
+        <Route path="/"  element={<Home/>}/>
           <Route path="/profile" element={<Navigate to ="/register"/>}/>
           <Route path="/main" element={<Navigate to ="/register" />} />
           <Route path="/register" element={<Register/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/forgot-password" element={<ForgotPassword/>} />
           <Route path="/resetPassword/:resetIdentifier" element={<ResetPassword />} />
-          <Route path="/rates" element={< Navigate to ="/login"/>} />
+          <Route path="/rates" element={<Navigate to ="/login"/>} />
         </>
       )}
     </Routes>

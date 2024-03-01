@@ -2,7 +2,7 @@
   "short_name": "Map-O-Share",
   "name": "Map-O-Share , Share at click",
   "description": "A coonecting application that is aimed to connect users on the go connect with each other and share resuousces in case one runs out of it.",
-  "start_url": "http://localhost:3000/register",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#222436",
   "background_color": "#121317",
