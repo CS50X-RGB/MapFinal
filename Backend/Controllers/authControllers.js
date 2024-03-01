@@ -28,12 +28,8 @@ export const Register = async (req, res, next) => {
       phoneno: phoneno,
       resetIdentifier: undefined,
     });
-    const token = sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
+    sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
     sendEmail(email, `Hi, ${user.name} Welcome to Map-O-Share`);
-    res.status(200).json({
-      success: true,
-      token: token
-    })
   } catch (err) {
     next(err);
   }
@@ -56,11 +52,7 @@ export const Login = async (req, res, next) => {
         message: "Email & password not a match",
       });
     }
-    const token = sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
-    res.status(201).json({
-      success: true,
-      token: token,
-    })
+    sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
   } catch (err) {
     next(err);
   }
@@ -143,8 +135,7 @@ export const ResetPassword = async (req, res) => {
     }
     user.password = await bcrypt.hash(newpass, 10);
     user.resetIdentifier = undefined;
-    const re = await user.save();
-    console.log(re);
+    await user.save();
   } catch (error) {
     console.error(error);
     return res.status(500).json({
