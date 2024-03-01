@@ -1,5 +1,5 @@
-import "./index.css";
-import logo3 from "./assets/logo3.svg";
+import "../index.css";
+import logo3 from "./assets/bg.svg";
 import bg from "./assets/bg.svg";
 import Example from "./Accordian.jsx";
 
