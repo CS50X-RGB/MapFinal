@@ -10,7 +10,7 @@ import { login } from "../cart/authSlice";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate("");
+  const navigate = useNavigate();
   const [res, setRes] = useState(null);
   const dispatch = useDispatch();
   const { isAuth } = useSelector((state) => state.auth);
@@ -24,7 +24,7 @@ export default function Login() {
       dispatch(login());
       console.log(`Before login 2`);
       navigate("/main");
-      console.log(`After login 1`);
+      console.log(`After login 1`);;
       console.log(isAuth);
       setRes(response);
     } catch (err) {
