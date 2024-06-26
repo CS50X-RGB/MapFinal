@@ -20,8 +20,11 @@ export default function Login() {
     try {
       const response = await LoginAxios(email, password);
       console.log(response);
+      console.log(`Before login 1`);
       dispatch(login());
+      console.log(`Before login 2`);
       navigate("/main");
+      console.log(`After login 1`);;
       console.log(isAuth);
       setRes(response);
     } catch (err) {

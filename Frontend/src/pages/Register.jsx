@@ -37,7 +37,6 @@ export default function Register() {
   const navigate = useNavigate();
   const [res, setRes] = useState(null);
   const dispatch = useDispatch();
-  const { isAuth } = useSelector((state) => state.auth);
   const [state, dispatchReducer] = useReducer(reducer, initialState);
   const [userType, setUserType] = useState(null);
 

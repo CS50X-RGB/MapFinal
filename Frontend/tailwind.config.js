@@ -13,6 +13,7 @@ module.exports = {
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
+        poppins : ['Poppins','sans-serif']
       }
     },
   },

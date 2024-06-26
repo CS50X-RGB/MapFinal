@@ -5,27 +5,29 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 export const ForgotPassword = () => {
-  const [ email,setEmail] = useState("");
-  const [response,setResponse] = useState("");
-  const formSubmit = async (e) =>{
-        e.preventDefault();
-        try {
-                const response = await axios.post(
-                        "https://maposhare.onrender.com/api/v1/users/forgot-password",{
-                                email: email,
-                        },{
-                                headers : {
-                                        "Content-Type": "application/json",
-                                },
-                                withCredentials: true,
-                        }
-                );
-                console.log(response.data);
-                setResponse(response.data);
-        } catch (err) {
-                console.error(err);
+  const [email, setEmail] = useState("");
+  const [response, setResponse] = useState("");
+  const formSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "https://maposhare.onrender.com/api/v1/users/forgot-password",
+        {
+          email: email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
-  }
+      );
+      console.log(response.data);
+      setResponse(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <>
       <div className="bg-back min-h-screen font-mono flex py-[1rem] md:py-[3rem] flex-row justify-center gap-4 relative">
@@ -66,19 +68,17 @@ export const ForgotPassword = () => {
           >
             Recover Password
           </button>
-          {
-                response.message
-                ?
-                <>
-                        <div>
-                                <h1 className="bg-text text-back border border-text rounded-lg font-mono">
-                                        {response.message}
-                                </h1>
-                        </div>
-                </> : 
-                <>
-                </>
-          }
+          {response.message ? (
+            <>
+              <div>
+                <h1 className="bg-text text-back border border-text rounded-lg font-mono">
+                  {response.message}
+                </h1>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
           <p className="text-text text-lg">OR</p>
           <p className="text-bold text-blue-600">
             Back to Login{" "}
