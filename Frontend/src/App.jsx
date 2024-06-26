@@ -9,6 +9,7 @@ import ForgotPassword from "./pages/FogotPassword.jsx";
 import { ResetPassword } from "./pages/ResetPassword.jsx";
 import Prices from "./pages/Rates.jsx";
 import Home from "./pages/LandingPage.jsx";
+
 export default function App() {
   const { isAuth } = useSelector((state) => state.auth);
   console.log(isAuth);
@@ -16,25 +17,25 @@ export default function App() {
     <Routes>
       {isAuth ? (
         <>
-          <Route path="/"  element={<Home/>}/>
-          <Route path="/profile" element={<Profile/>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/main" element={<Main />} />
-          <Route path="/register" element={< Navigate to ="/login"/>} />
-          <Route path="/login" element={< Navigate to ="/login"/>} />
-          <Route path="/forgot-password" element={<ForgotPassword/>} />
+          <Route path="/register" element={< Navigate to="/login" />} />
+          <Route path="/login" element={< Navigate to="/login" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/resetPassword/:resetIdentifier" element={<ResetPassword />} />
-          <Route path="/rates" element={<Prices/>} />
+          <Route path="/rates" element={<Prices />} />
         </>
       ) : (
         <>
-         <Route path="/"  element={<Home/>}/>
-          <Route path="/profile" element={<Navigate to ="/register"/>}/>
-          <Route path="/main" element={<Navigate to ="/register" />} />
-          <Route path="/register" element={<Register/>} />
-          <Route path="/login" element={<Login/>} />
-          <Route path="/forgot-password" element={<ForgotPassword/>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Navigate to="/register" />} />
+          <Route path="/main" element={<Navigate to="/register" />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/resetPassword/:resetIdentifier" element={<ResetPassword />} />
-          <Route path="/rates" element={< Navigate to ="/login"/>} />
+          <Route path="/rates" element={< Navigate to="/login" />} />
         </>
       )}
     </Routes>

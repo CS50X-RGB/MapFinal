@@ -21,7 +21,6 @@ export const Prices = () => {
             withCredentials: true,
           }
         );
-        console.log(response.data.dieselPrices);
         setPetrolPrice(response.data.petrolPrices);
         setDiselPrice(response.data.dieselPrices);
         setLoading(false);
