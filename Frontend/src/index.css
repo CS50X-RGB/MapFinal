@@ -2,3 +2,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.color{
+     background-image: linear-gradient(to right top, #051937, #0d315f, #144b8b, #1767ba, #1284eb);
+     background-repeat : no-repeat
+}
