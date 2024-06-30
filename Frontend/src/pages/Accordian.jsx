@@ -1,41 +1,19 @@
-import React, { useState } from "react";
-
-const AccordionItem = ({ title, content }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleAccordion = () => {
-    setIsOpen(!isOpen);
-  };
-
+import { Accordion, AccordionItem } from "@nextui-org/react"
+export default function Accordian() {
+  const defaultContent =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
   return (
-    <div className="bg-black rounded-2xl border border-white">
-      <div onClick={toggleAccordion}>{title}</div>
-      {isOpen && <div className="bg-blue-700 font-mono">{content}</div>}
-    </div>
-  );
-};
-
-const Accordion = ({ items }) => {
-  return (
-    <div className="rounded-xl">
-      {items.map((item, index) => (
-        <AccordionItem key={index} title={item.title} content={item.content} />
-      ))}
-    </div>
-  );
-};
-
-const Example = () => {
-  const accordionItems = [
-    { title: "Section 1", content: "Content for Section 1" },
-    { title: "Section 2", content: "Content for Section 2" },
-  ];
-
-  return (
-    <div>
-      <Accordion items={accordionItems} />
-    </div>
-  );
-};
-
-export default Example;
+    <>
+      <Accordion className="text-white w-1/2">
+        <AccordionItem
+          key="theme"
+          aria-label="Theme"
+          title="Theme"
+          className="text-white"
+        >
+          {defaultContent}
+        </AccordionItem>
+      </Accordion>
+    </>
+  )
+}
