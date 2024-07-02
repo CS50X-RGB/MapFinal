@@ -52,7 +52,7 @@ function LandingPage() {
             Create your own polling stations whenever you want at your control
           </p>
         </div>
-        <div className="relative w-full md:w-1/2 ">
+        <div className="relative overflow-hidden p-7 w-full md:w-1/2 ">
           <img src={petrolPump} className="w-1/4 h-1/4" alt="Petrol Pump" />
           <motion.img
             initial={{ x: "100%", y: "-70%" }}
@@ -62,15 +62,20 @@ function LandingPage() {
             className="w-full h-full absolute top-10 z-30" alt="car" />
         </div>
       </div>
-      <div className="grid grid-rows-3 p-[5rem]  grid-cols-0 md:grid-cols-2">
-        <Accordian />
-        <Accordian />
-        <Accordian />
-        <Accordian />
-        <Accordian />
-        <Accordian />
-        <Accordian />
-        <Accordian />
+      <div className="flex px-[4rem] flex-col items-center justify-center">
+        <h1 className="text-6xl text-green-500 pb-[3rem]">FAQ</h1>
+        <div className="flex flex-row items-center justify-center h-[40vh] gap-4 w-full">
+          <div className="flex flex-col w-full md:w-1/2 gap-4">
+            <Accordian />
+            <Accordian />
+            <Accordian />
+          </div>
+          <div className="flex flex-col w-1/2 gap-3">
+            <Accordian />
+            <Accordian />
+            <Accordian />
+          </div>
+        </div>
       </div>
     </div >
   );
