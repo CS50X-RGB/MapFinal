@@ -2,7 +2,8 @@ import { Accordion, AccordionItem } from "@nextui-org/react"
 import { EndIcon } from "./assets/EndIcon";
 
 
-export default function Accordian() {
+
+export default function Accordian(title, description) {
   const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
   return (
@@ -48,9 +49,9 @@ export default function Accordian() {
         }} variant="light">
         <AccordionItem indicator={<EndIcon />} key="1" aria-label="Accordion 1" classNames={{
           title: "text-black"
-        }} title="Accordion 1">
+        }} title={title}>
           <div className="w-full h-1 bg-green-400 rounded-xl" />
-          <h1 className="text-blue-800 font-bold">{defaultContent}</h1>
+          <h1 className="text-blue-800 font-bold">{description}</h1>
         </AccordionItem>
       </Accordion>
     </>
