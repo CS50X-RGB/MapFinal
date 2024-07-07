@@ -9,6 +9,36 @@ import car from "../assests/car.svg";
 import petrolPump from "../assests/petrolpump.svg";
 import Accordian from "./Accordian.jsx";
 
+const Faqs = [
+  {
+    title: "How does the rating system work in Map-O-Share?",
+    description: "The rating system in Map-O-Share assigns ratings to users in two ways: +0.5 for completing a transaction of shared resources (Customer and Provider), and -0.5 for aborting a transaction after setting up a meetup for potential transactions between Providers and Resource Acceptors."
+  },
+  {
+    title: "What are the requirements for Fuel Resource Sharing Orders?",
+    description: "For liquid-type Resource Providers: Only 10 litres per order. For liquid-type Resource Acceptors: Maximum of 10 litres per order."
+  },
+  {
+    title: "What are the requirements for Electrical Battery Sharing Order",
+    description: "For Electrical Battery Resource Provider :Only 2 EV batteries at Once per Order.For Electrical Battery Resoure Acceptor :1 EV battery at max per order"
+  }
+];
+
+const Faqs1 = [
+  {
+    title: "What is the age requirements for registering in Map-O-Share",
+    description: "For registration in Map-O-Share, the user must be in age group of 18-60.For registration in Map-O-Share, the user must be in age group of 18-60."
+  },
+  {
+    title: "What type of Services are provided by Map-O-Share?",
+    description: "Map-O-Share provides sharing of 2 types of resources liquid resources (Fuel and Diesel) and Electrical battery."
+  },
+  {
+    title: "What type of resources are allowed in sharing in Map-O-Share",
+    description: "Map-O-Share provides sharing of 2 types of resources.Liquid Resources(Fuel and Diesel) and Electrical battery"
+  }
+]
+
 function LandingPage() {
   return (
     <div className="color font-poppins">
@@ -45,7 +75,7 @@ function LandingPage() {
       </div>
       <div className="flex  flex-col md:flex-row justify-around w-full items-center">
         <div className="w-full md:w-1/2 items-center flex p-8 flex-col">
-          <h1 className="text-blue-700 font-extrabold text-4xl p-8">
+          <h1 className="text-black font-extrabold text-4xl p-8">
             Never get your car get stopped
           </h1>
           <p className="text-white text-xl font-bold">
@@ -62,21 +92,23 @@ function LandingPage() {
             className="w-full h-full absolute top-10 z-30" alt="car" />
         </div>
       </div>
-      <div className="flex px-[4rem] flex-col items-center justify-center">
-        <h1 className="text-6xl text-green-500 pb-[3rem]">FAQ</h1>
-        <div className="flex flex-row items-center justify-center h-[40vh] gap-4 w-full">
+      <div className="flex px-[1rem] md:px-[4rem] flex-col items-center justify-center">
+        <h1 className="text-3xl md:text-6xl text-green-500 pb-[1rem] md:pb-[3rem]">FAQ</h1>
+        <div className="flex flex-col md:flex-row items-center justify-center h-[100vh] md:h-[50vh] gap-4 w-full">
           <div className="flex flex-col w-full md:w-1/2 gap-4">
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
-
+            {Faqs.map((faq, index) => (
+              <Accordian key={index} title={faq.title} description={faq.description} />
+            ))}
           </div>
-          <div className="flex flex-col w-1/2 gap-3">
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
-            <Accordian title="Title 1" description="Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa et culpa duis." />
+          <div className="flex flex-col  w-full md:w-1/2 gap-3">
+            {Faqs1.map((faq, index) => (
+              <Accordian key={index} title={faq.title} description={faq.description} />
+            ))}
           </div>
         </div>
+      </div>
+      <div className="flex flex-col h-[40vh]">
+        <h1>Footer</h1>
       </div>
     </div >
   );
