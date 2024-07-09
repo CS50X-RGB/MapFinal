@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import car from "../assests/car.svg";
 import petrolPump from "../assests/petrolpump.svg";
 import Accordian from "./Accordian.jsx";
+import Footer from "../components/Footer";
 
 const Faqs = [
   {
@@ -70,7 +71,9 @@ function LandingPage() {
           whileTap={{ scale: 0.9 }}
           className="px-[2rem] md:px-[4rem] rounded-xl justify-self-start py-[1rem] text-xl border-dotted border-4 border-sky-500 bg-gradient-to-r from-blue-400 to-pink-200
           text-blue-800 border-dotted font-bold">
-          Start Now
+          <Link to="/register">
+            Start Now
+          </Link>
         </motion.button>
       </div>
       <div className="flex  flex-col md:flex-row justify-around w-full items-center">
@@ -93,7 +96,7 @@ function LandingPage() {
         </div>
       </div>
       <div className="flex px-[1rem] md:px-[4rem] flex-col items-center justify-center">
-        <h1 className="text-3xl md:text-6xl text-green-500 pb-[1rem] md:pb-[3rem]">FAQ</h1>
+        <h1 className="text-3xl md:text-6xl font-bold text-blue-700 pb-[0rem] md:pb-[3rem]">FAQ</h1>
         <div className="flex flex-col md:flex-row items-center justify-center h-[100vh] md:h-[50vh] gap-4 w-full">
           <div className="flex flex-col w-full md:w-1/2 gap-4">
             {Faqs.map((faq, index) => (
@@ -107,9 +110,7 @@ function LandingPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col h-[40vh]">
-        <h1>Footer</h1>
-      </div>
+      <Footer />
     </div >
   );
 }
