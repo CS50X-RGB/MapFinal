@@ -1,6 +1,6 @@
 import express from "express";
 import { config } from "dotenv";
-import  connectDB  from "./data/database.js";
+import connectDB from "./data/database.js";
 import cookieParser from "cookie-parser";
 import UserRouter from "./Router/auth.js";
 import LocationRouter from "./Router/location.js";
@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin:'https://map-final.vercel.app',
+    origin: 'https://map-final.vercel.app',
     methods: ["GET", "POST", "PUT", "DELETE"],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -38,11 +38,7 @@ config({
   path: "./data/config.env",
 });
 
-const redis = new Redis({
-  host: process.env.REDIS_DB,
-  port: 16677,
-  password:process.env.REDIS_PASS,
-});
+const redis = new Redis("rediss://default:AcgSAAIncDE1NWUyMmQ4MDQzZjA0OGIzODJmMzk1MmFiYjBmMjI4YXAxNTEyMTg@helpful-dinosaur-51218.upstash.io:6379");
 
 redis.on('connect', () => {
   console.log("Connected to Redis Cloud..");
