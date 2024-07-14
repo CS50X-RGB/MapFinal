@@ -38,7 +38,7 @@ config({
   path: "./data/config.env",
 });
 
-const redis = new Redis("rediss://default:AcgSAAIncDE1NWUyMmQ4MDQzZjA0OGIzODJmMzk1MmFiYjBmMjI4YXAxNTEyMTg@helpful-dinosaur-51218.upstash.io:6379");
+const redis = new Redis(process.env.REDIS_DB);
 
 redis.on('connect', () => {
   console.log("Connected to Redis Cloud..");
