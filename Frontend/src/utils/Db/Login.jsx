@@ -1,9 +1,10 @@
 import axios from "axios";
+import { localUrl } from "./Resgister";
 
 const LoginAxios = async (email, password) => {
   try {
     const response = await axios.post(
-      `https://maposhare.onrender.com/api/v1/users/login`,
+      `${localUrl}/users/login`,
       {
         email: email,
         password: password,
@@ -16,11 +17,11 @@ const LoginAxios = async (email, password) => {
       }
     );
     console.log(response.data.token);
-    localStorage.setItem("Map_0_Share",response.data.token);
+    localStorage.setItem("Map_0_Share", response.data.token);
     return response;
   } catch (err) {
     return err.message;
   }
 };
 
-export  default  LoginAxios;
+export default LoginAxios;

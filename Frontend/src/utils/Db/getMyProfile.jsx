@@ -1,10 +1,11 @@
 import axios from "axios";
+import { localUrl } from "./Resgister";
 
 const ProfileAxios = async () => {
   console.log("Profile check....");
   try {
     const response = await axios.get(
-      "https://maposhare.onrender.com/api/v1/users/getMyProfile",
+      `${localUrl}/users/getMyProfile`,
       {
         headers: {
           "Content-Type": "application/json",

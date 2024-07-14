@@ -1,8 +1,9 @@
 import axios from "axios";
+import { localUrl } from "./Resgister";
 
 export const handleLogout = async () => {
   try {
-    const response = await axios.get("https://maposhare.onrender.com/api/v1/users/logout", {
+    const response = await axios.get(`${localUrl}/users/logout`, {
       headers: {
         "Content-Type": "application/json",
       },
