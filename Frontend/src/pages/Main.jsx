@@ -406,7 +406,11 @@ function Main() {
   }, [id, succ, neigh, driverMode]);
 
   if (!location.latitude || !location.longitude) {
-    return <div>Loading...</div>;
+    return (<div className="flex flex-col justify-center items-center h-[100vh]">
+      <h1 className="text-2xl font-mono font-bold"> Loading...</h1>
+    </div>
+    );
+
   }
 
   return (

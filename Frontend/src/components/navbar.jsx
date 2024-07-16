@@ -5,13 +5,14 @@ import handleLogout from "../utils/Db/Logout";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, logout } from "../cart/authSlice";
+import { Card, CardBody, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
 
 export default function Navbar({ children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuth, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
-
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -44,24 +45,59 @@ export default function Navbar({ children }) {
   }
 
   return (
-    <div className="bg-back flex flex-row justify-center items-center p-4 rounded-t-xl">
+    <>
       {isAuth ? (
-        <div className="flex flex-end font-mono items-center">
-          <p className="text-xl text-text">Welcome {user.name}</p>
-          <img
-            className="hidden md:block rounded-full h-[10vh] "
-            src={user.profilePic}
-            alt="profilepic"
-          />
-          {children}
-          <button
-            onClick={logoutHandler}
-            className="bg-text text-back px-3 py-1 rounded-md"
-          >
-            Logout
-          </button>
-        </div>
+        <Card className="flex bg-black flex-end font-mono items-center">
+          <CardBody className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-around">
+            <div className="flex flex-row items-center justify-around w-full md:w-fit">
+              <p className="text-xl text-text">Welcome {user?.name}</p>
+              <Image
+                radius="full"
+                width={200}
+                height={200}
+                src={user?.profilePic}
+                alt="profilepic"
+              />
+            </div>
+            {children}
+            <Button
+
+              onPress={onOpen}
+              className="bg-text text-back px-3 py-1 rounded-md"
+            >
+              Logout
+            </Button>
+          </CardBody>
+        </Card>
+
       ) : null}
-    </div>
+      <Modal
+        placement="center"
+        isOpen={isOpen}
+        className="bg-back text-text font-mono"
+        onClose={onClose}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="text-2xl font-bold">Logout</ModalHeader>
+              <ModalBody>
+                <p>
+                  You Want to Logout ?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="danger" onPress={logoutHandler}>
+                  Logout
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

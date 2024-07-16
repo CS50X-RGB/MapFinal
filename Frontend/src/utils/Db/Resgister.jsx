@@ -32,10 +32,14 @@ const RegisterAxios = async (
         withCredentials: true,
       }
     );
-    console.log(response.data.token);
     localStorage.setItem("Map_0_Share", response.data.token);
     return response;
   } catch (error) {
+    console.log(error);
+    if (error.response.data) {
+      console.log(error.response.data);
+      return error.response.data
+    }
     return error.message;
   }
 };

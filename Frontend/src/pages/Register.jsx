@@ -1,6 +1,7 @@
 import { useReducer, useState } from "react";
 import "../App.css";
 import Logo from "../logo.svg";
+import { Button } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import LogoMob from "../logo2.svg";
 import { IoMdAdd } from "react-icons/io";
@@ -55,11 +56,12 @@ export default function Register() {
       };
     }
   };
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const response = await RegisterAxios(
         image,
         state.name,
@@ -69,25 +71,29 @@ export default function Register() {
         userType,
         state.phoneNo
       );
-      console.log(response);
-      if (response.data.success) {
+      console.log(response.errors);
+      if (response?.data?.success) {
         setRes(response.data.message);
         dispatch(login());
         navigate("/main");
-      } else if (!response.data.success && response.data.errors) {
-        // Registration failed with validation errors
-        const errorMessages = response.data.errors
+      } else if (response?.success === false && response?.errors) {
+        // Registration failed with validation errors 
+        const errorMessages = response.errors
           .map((error) => error.message)
           .join(", ");
         console.log(`Registration failed: ${errorMessages}`);
+        setLoading(false);
         setRes(`Registration failed: ${errorMessages}`);
       } else {
         console.error("Unexpected error during registration");
-        setRes("An unexpected error occurred during registration.");
+        console.log(response);
+        setRes(response?.message || "Error during registeration");
+        setLoading(false);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       setRes("An error occurred during registration.");
+      setLoading(false);
     }
   };
 
@@ -131,9 +137,8 @@ export default function Register() {
             Register
           </h1>
           <div
-            className={`rounded-full ${
-              !image ? "p-[3rem]" : "p-[.1rem]"
-            } relative border-2 border-text`}
+            className={`rounded-full ${!image ? "p-[3rem]" : "p-[.1rem]"
+              } relative border-2 border-text`}
           >
             <input
               type="file"
@@ -239,12 +244,35 @@ export default function Register() {
               </div>
             </div>
           </div>
-          <button
+          <Button
+            isLoading={loading}
+            spinner={
+              <svg
+                className="animate-spin h-5 w-5 text-current"
+                fill="none"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  fill="currentColor"
+                />
+              </svg>
+            }
             type="submit"
             className="bg-text flex flex-row justify-center items-center text-back px-[.5rem] md:px-[2rem] py-[1rem] rounded-3xl shadow-text shadow-2xl hover:text-text hover:bg-back"
           >
             Submit Details
-          </button>
+          </Button>
           <p className="text-text text-lg">OR</p>
           <p className="text-bold text-blue-600">
             Already have an account{" "}
