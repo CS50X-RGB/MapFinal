@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://map-final.vercel.app',
+    origin: ['https://map-final.vercel.app', 'http://localhost:3000'],
     methods: ["GET", "POST", "PUT", "DELETE"],
     optionsSuccessStatus: 200,
     credentials: true,

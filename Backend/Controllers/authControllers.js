@@ -10,6 +10,15 @@ export const Register = async (req, res, next) => {
     const existingUser = await User.findOne({
       email
     });
+    const existingUserPhone = await User.findOne({
+      phoneno
+    });
+    if (existingUserPhone) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone No already registered",
+      });
+    }
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -85,7 +94,7 @@ export const getMyProfile = (req, res) => {
       });
     }
   } catch (error) {
-    
+
   }
 }
 
@@ -147,9 +156,9 @@ export const ResetPassword = async (req, res) => {
 
 export const resetDetails = async (req, res) => {
   try {
-    const { name, email, phone, profilePic,dLNo } = req.body;
+    const { name, email, phone, profilePic, dLNo } = req.body;
     const user = req.user;
-    
+
     if (!user) {
       return res.status(401).json({
         success: false,
