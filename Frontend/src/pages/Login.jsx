@@ -21,7 +21,7 @@ export default function Login() {
       const response = await LoginAxios(email, password);
       console.log(response);
       console.log(`Before login 1`);
-      dispatch(login());
+      dispatch(login(response.data));
       console.log(`Before login 2`);
       navigate("/main");
       console.log(`After login 1`);;

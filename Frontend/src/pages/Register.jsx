@@ -74,7 +74,7 @@ export default function Register() {
       console.log(response.errors);
       if (response?.data?.success) {
         setRes(response.data.message);
-        dispatch(login());
+        dispatch(login(response.data));
         navigate("/main");
       } else if (response?.success === false && response?.errors) {
         // Registration failed with validation errors 

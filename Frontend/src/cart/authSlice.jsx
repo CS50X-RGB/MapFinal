@@ -7,19 +7,21 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     isAuth: initialAuthState,
+    user: {}
   },
   reducers: {
     login: (state, action) => {
-      state.isAuth = true;
-      state.user = action.payload;
-      if(localStorage.getItem("Map_0_Share") !== "undefined"){
+      state.isAuth = action.payload.token;
+      state.user = action.payload.user;
+      console.log(action.payload);
+      if (localStorage.getItem("Map_0_Share") !== "undefined") {
         Cookies.set("auth", true, { sameSite: "None", secure: true });
       }
     },
     logout: (state, action) => {
       state.isAuth = false;
       state.user = null;
-      if(localStorage.getItem("Map_0_Share") !== "undefined"){
+      if (localStorage.getItem("Map_0_Share") !== "undefined") {
         Cookies.set("auth", false, { sameSite: "None", secure: true });
       }
       localStorage.removeItem("Map_0_share");

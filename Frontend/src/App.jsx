@@ -20,7 +20,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/main" element={<Main />} />
-
           <Route path="/register" element={< Navigate to="/login" />} />
           <Route path="/login" element={< Navigate to="/login" />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

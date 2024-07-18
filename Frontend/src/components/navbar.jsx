@@ -13,6 +13,7 @@ export default function Navbar({ children }) {
   const { isAuth, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const { isOpen: isOpenDriver, onOpen: onOpenDriver, onOpenChange: onOpenChangeDriver, onClose: onCloseDriver } = useDisclosure();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -41,7 +42,9 @@ export default function Navbar({ children }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex flex-row justify-center items-center h-full">
+      <h4 className="text-xl font-mono">Loading...</h4>
+    </div>;
   }
 
   return (
@@ -74,6 +77,7 @@ export default function Navbar({ children }) {
       <Modal
         placement="center"
         isOpen={isOpen}
+        onOpenChange={onOpenChange}
         className="bg-back text-text font-mono"
         onClose={onClose}
       >
@@ -92,6 +96,34 @@ export default function Navbar({ children }) {
                 </Button>
                 <Button color="danger" onPress={logoutHandler}>
                   Logout
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        placement="center"
+        isOpen={isOpenDriver}
+        onOpenChange={onOpenChangeDriver}
+        className="bg-back text-text font-mono"
+        onClose={onCloseDriver}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="text-2xl font-bold">Switch On Driver Mode?</ModalHeader>
+              <ModalBody>
+                <p>
+                  You Want to Logout ?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="success" onPress={logoutHandler}>
+                  Switch On
                 </Button>
               </ModalFooter>
             </>

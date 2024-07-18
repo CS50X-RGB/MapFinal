@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { store } from './store';
+import { persistor, store } from './store';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { NextUIProvider } from '@nextui-org/react';
+import { PersistGate } from 'redux-persist/integration/react';
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
@@ -22,11 +23,13 @@ if ('serviceWorker' in navigator) {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <NextUIProvider>
-    <BrowserRouter>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </BrowserRouter>
+    <PersistGate loading={null} persistor={persistor} >
+      <BrowserRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </PersistGate>
   </NextUIProvider>
 );
 
