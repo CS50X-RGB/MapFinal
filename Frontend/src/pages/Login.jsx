@@ -19,11 +19,11 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await LoginAxios(email, password);
-      console.log(response);
+      console.log(response,"LoginPage");
       console.log(`Before login 1`);
-      dispatch(login(response.data));
+      dispatch(login(response));
       console.log(`Before login 2`);
-      navigate("/main");
+     // navigate("/main");
       console.log(`After login 1`);;
       console.log(isAuth);
       setRes(response);

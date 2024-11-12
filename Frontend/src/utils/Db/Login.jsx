@@ -16,9 +16,9 @@ const LoginAxios = async (email, password) => {
         withCredentials: true,
       }
     );
-    console.log(response.data.token);
+    console.log(response.data,"Token");
     localStorage.setItem("Map_0_Share", response.data.token);
-    return response;
+    return response.data;
   } catch (err) {
     return err.message;
   }

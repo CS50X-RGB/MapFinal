@@ -59,6 +59,6 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something not working");
 })
 
-connectDB();
+connectDB(process.env.DATABASE_URL);
 
 export default redis;

@@ -12,6 +12,7 @@ export default function Navbar({ children }) {
   const navigate = useNavigate();
   const { isAuth, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
+  console.log(user);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { isOpen: isOpenDriver, onOpen: onOpenDriver, onOpenChange: onOpenChangeDriver, onClose: onCloseDriver } = useDisclosure();
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Navbar({ children }) {
       try {
         const response = await ProfileAxios();
         const userData = response.data.user;
-        console.log(response.data.user);
+        console.log(response.data);
         dispatch(login(userData));
       } catch (error) {
         console.error("Error fetching user data:", error);

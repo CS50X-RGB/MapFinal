@@ -61,7 +61,7 @@ export const Login = async (req, res, next) => {
         message: "Email & password not a match",
       });
     }
-    sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
+    sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 200);
   } catch (err) {
     next(err);
   }

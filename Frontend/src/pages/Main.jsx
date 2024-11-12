@@ -150,7 +150,6 @@ function Main() {
   async function notifyAllControlPostive(driver) {
     driver.map(async (d) => {
       try {
-        console.log("Hii");
         const response = await axios.post(
           "https://maposhare.onrender.com/api/v1/notify/notify",
           {

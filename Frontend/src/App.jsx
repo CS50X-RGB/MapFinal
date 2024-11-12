@@ -11,17 +11,17 @@ import Prices from "./pages/Rates.jsx";
 import Home from "./pages/LandingPage.jsx";
 
 export default function App() {
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth } = useSelector((state) => state.auth); 
   console.log(isAuth);
   return (
     <Routes>
-      {isAuth ? (
+      {isAuth  ? (
         <>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/main" element={<Main />} />
-          <Route path="/register" element={< Navigate to="/login" />} />
-          <Route path="/login" element={< Navigate to="/login" />} />
+          <Route path="/register" element={<Navigate to="/main" />} />
+          <Route path="/login" element={<Navigate to="/main" />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/resetPassword/:resetIdentifier" element={<ResetPassword />} />
           <Route path="/rates" element={<Prices />} />

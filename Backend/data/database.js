@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-const connectDB = () => {
-    mongoose.connect("mongodb+srv://rohan:rohan@prismamongodb.7oqhqnm.mongodb.net/?retryWrites=true", {
+const connectDB = (MONGO_URL) => {
+    mongoose.connect(MONGO_URL, {
         dbName: "Petro-O-Share",
     }).then((c) => {
         console.log(`DataBase Connected ${c.connection.host}`);
