@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/features.js";
 import sendEmail from "../utils/sendMail.js";
 import generateRandomToken from "../utils/generateRandomToken.js";
+import { getAcessToken } from "../firebase.js";
 
 export const Register = async (req, res, next) => {
   try {
@@ -26,6 +27,8 @@ export const Register = async (req, res, next) => {
       });
     }
     const hash = await bcrypt.hash(password, 10);
+    const fcmToken = getAcessToken();
+    console.log(fcmToken);
     let user = await User.create({
       name,
       email,
@@ -36,6 +39,7 @@ export const Register = async (req, res, next) => {
       userType: userType,
       phoneno: phoneno,
       resetIdentifier: undefined,
+      fcmToken : fcmToken,
     });
     sendToken(user, res, `${user.name} welcome !! to Map-O-Share`, 201);
     sendEmail(email, `Hi, ${user.name} Welcome to Map-O-Share`);
