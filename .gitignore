@@ -6,7 +6,9 @@
 .pnp.js
 
 Backend/data/config.env
+Backend/data/map-server-c2509-firebase-adminsdk-p3kxl-937061eb62.json
 Frontend/build
+Frontend/firebase.js
 Frontend/node_modules
 Backend/node_modules
 

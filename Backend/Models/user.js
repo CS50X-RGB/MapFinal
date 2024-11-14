@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   fcmToken : {
-    type : String,
-    required : true
+    type : String
   },
   profilePic: {
     type : String,
