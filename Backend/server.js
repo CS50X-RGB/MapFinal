@@ -39,6 +39,8 @@ config({
 });
 
 const redis = new Redis(process.env.REDIS_DB);
+export const Firebase = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
 
 redis.on('connect', () => {
   console.log("Connected to Redis Cloud..");

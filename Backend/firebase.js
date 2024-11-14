@@ -1,8 +1,9 @@
 import admin from "firebase-admin";
 import { initializeApp } from "firebase-admin";
+import { Firebase } from "./server";
 
 
-var serviceAccount = require("./data/map-server-c2509-firebase-adminsdk-p3kxl-937061eb62.json");
+var serviceAccount = require(Firebase);
 
 initializeApp({ 
   credential: admin.credential.cert(serviceAccount),
