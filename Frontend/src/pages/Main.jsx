@@ -5,6 +5,8 @@ import maplibreglWorker from "maplibre-gl/dist/maplibre-gl-csp-worker";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "../index.css";
+import { locationRoutes } from "../core/apiRoutes.js";
+import {postData,deleteData} from "../core/apiHandler"
 import { fetchPetrolPumps } from "../utils/getPetrolPumps.jsx";
 import {
   PetrolPumpLayer,
@@ -18,10 +20,9 @@ import { useSelector } from "react-redux";
 import { FaRegFaceSmileWink } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
+import { useMutation } from "@tanstack/react-query";
+import sendFirebaseToken, { requestPermission } from "../utils/Notifications.js";
 
-const beamsClient = new PusherPushNotifications.Client({
-  instanceId: "c41a756e-0c26-4252-9373-43bff3466a8b",
-});
 
 // initializePusher();
 
@@ -94,7 +95,7 @@ function Main() {
         const { coords } = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject);
         });
-
+        requestPermission(); 
         const { latitude, longitude } = coords;
         setLocation({ latitude, longitude });
 
@@ -126,8 +127,6 @@ function Main() {
             location.longitude
           );
           setSelected({ distance, ...e.lngLat });
-          console.log("Selected:", selected);
-          console.log(e);
         }
       };
       const handleMouseEnter = () => {
@@ -193,45 +192,24 @@ function Main() {
       console.log(error);
     }
   }
-  async function antiDriver() {
-    try {
-      const response = await axios.delete(
-        "https://maposhare.onrender.com/api/v1/location/deleteLoc",
-        {
-          headers: {
-            "Content-Length": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  const driMode = async () => {
-    try {
-      const response = await axios.post(
-        "https://maposhare.onrender.com/api/v1/location/updateLoc",
-        {
-          longitude: location.longitude,
-          latitude: location.latitude,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
 
-      return response;
-    } catch (e) {
-      console.error(e);
-      throw e;
+  const antiDriver = useMutation({
+     mutationKey: ["antiDriver"],
+     mutationFn : () => {
+        return deleteData(locationRoutes.deleteLoc,{},{});
     }
-  };
+  });
+   const driMode = useMutation({
+      mutationKey : ["dirMode"],
+      mutationFn : () => {
 
+            return postData(locationRoutes.updateLoc,{},location);
+      }
+  })
+  const tokenSender = async () => {
+      await sendFirebaseToken();
+       driMode.mutate();
+  } 
   const getNeighbours = async (r) => {
     try {
       const response = await axios.get(
@@ -253,7 +231,7 @@ function Main() {
     const intervalId = setInterval(async () => {
       try {
         if (driverMode) {
-          const res = await driMode();
+          const res = driMode.mutate();
           console.log(res);
         }
       } catch (error) {
@@ -274,7 +252,6 @@ function Main() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(neigh);
         if (neigh && driverMode) {
           const res = await getNeighbours(100);
           console.log(res.data.nearbyDrivers);
@@ -310,27 +287,13 @@ function Main() {
       localStorage.setItem("neigh", neigh.toString());
     };
   }, []);
-  const initializePusher = async () => {
-    try {
-      await beamsClient.start();
-      console.log("Pusher Push Notifications SDK started successfully");
-      await beamsClient.addDeviceInterest("all_drivers");
-      console.log("Successfully registered and subscribed!");
-      setIntial(true);
-    } catch (error) {
-      console.error("Error initializing Pusher Push Notifications SDK:", error);
-    }
-  };
-  useEffect(() => {
-    if (driverMode && neigh) {
-      initializePusher();
-    }
-  }, []);
+
+
 
   const cancelTrans = async (driverId) => {
     try {
       const selectedDriver = data.find((driver) => driver.userId === driverId);
-      console.log(selectedDriver.userId);
+ //     console.log(selectedDriver.userId);
       if (selectedDriver) {
         const response = await axios.put(
           "https://maposhare.onrender.com/api/v1/users/UnsucessTrans",
@@ -478,7 +441,10 @@ function Main() {
               <>
                 <button
                   className="bg-back text-text px-6 py-3"
-                  onClick={() => setDriverMode(!driverMode)}
+                  onClick={() =>{
+                     setDriverMode(!driverMode);
+                    tokenSender();
+                }}
                 >
                   {user.userType === "RegularUser"
                     ? "DriverMode is ON"
@@ -500,7 +466,7 @@ function Main() {
                     <button
                       className="bg-back text-text px-6 py-3"
                       onClick={() => {
-                        antiDriver();
+                        antiDriver.mutate();
                         setNeigh(!neigh);
                       }}
                     >

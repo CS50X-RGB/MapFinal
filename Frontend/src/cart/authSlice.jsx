@@ -13,7 +13,7 @@ const authSlice = createSlice({
     login: (state, action) => {
       console.log(action.payload,"Token in slice");
       state.isAuth = true;
-      state.user = action.payload.user;
+      state.user = action.payload;
       if (localStorage.getItem("Map_0_Share") !== "undefined") {
         Cookies.set("auth", true, { sameSite: "None", secure: true });
       }

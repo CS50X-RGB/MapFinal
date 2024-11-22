@@ -5,22 +5,24 @@ import handleLogout from "../utils/Db/Logout";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, logout } from "../cart/authSlice";
-import { Card, CardBody, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Card, CardBody,Avatar, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+
 
 export default function Navbar({ children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuth, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
-  console.log(user);
+  console.log(user , "user"); 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { isOpen: isOpenDriver, onOpen: onOpenDriver, onOpenChange: onOpenChangeDriver, onClose: onCloseDriver } = useDisclosure();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await ProfileAxios();
-        const userData = response.data.user;
-        console.log(response.data);
+       console.log(response);
+        const userData = response?.data?.user;
+
         dispatch(login(userData));
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -53,12 +55,11 @@ export default function Navbar({ children }) {
       {isAuth ? (
         <Card className="flex bg-black flex-end font-mono items-center">
           <CardBody className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-around">
-            <div className="flex flex-row items-center justify-around w-full md:w-fit">
+            <div className="flex flex-row items-center gap-4 justify-around w-full md:w-fit">
               <p className="text-xl text-text">Welcome {user?.name}</p>
-              <Image
+              <Avatar
                 radius="full"
-                width={200}
-                height={200}
+                size="lg" 
                 src={user?.profilePic}
                 alt="profilepic"
               />

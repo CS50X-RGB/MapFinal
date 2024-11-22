@@ -1,5 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { getToken } from "firebase/messaging";
-import { messaging } from "../../firebase";
+import { messaging } from "../firebase";
+import { postData } from "../core/apiHandler";
+import { authRoutes } from "../core/apiRoutes";
 
 export function requestPermission() {
   console.log('Requesting permission...');
@@ -11,12 +14,12 @@ export function requestPermission() {
 }
 
 
-export async function sendFirebaseToken() {
+export default async function sendFirebaseToken() {
     const m = messaging;
     return getToken(m, { vapidKey: process.env.FIREBASE_VAPID_KEY })
         .then((currentToken) => {
             if (currentToken) {
-                  
+                 console.log(currentToken,"token");
             } else {
                 console.log("No Firebase token available. Request permission to generate one.");
             }
@@ -25,4 +28,14 @@ export async function sendFirebaseToken() {
             console.error("An error occurred while retrieving token: ", err);
         });
 }
-
+/*
+const sendToken = useMutation({
+   mutationKey : ["sendToken"],
+   mutationFn : async (token) => {
+       const body = {
+         fcmToken : token
+      }
+      return postData(authRoutes.sendToken,{},body);
+   }
+})
+*/

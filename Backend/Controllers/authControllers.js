@@ -27,7 +27,7 @@ export const Register = async (req, res, next) => {
       });
     }
     const hash = await bcrypt.hash(password, 10);
-    console.log(fcmToken);
+
     let user = await User.create({
       name,
       email,
@@ -81,6 +81,29 @@ export const Logout = async (req, res) => {
     })
 };
 
+export const setAuthToken = async (req,res) => {
+  try{
+    const { fcmToken } = req.body;
+    const { id } = req.user;
+    const user = await User.findByIdAndUpdate(id, {
+        fcmToken : fcmToken
+     });
+     if(!user){
+         return res.status(404).json({
+           message : "User Not Found"
+        })
+    }
+    return res.status(200).json({
+       message : 'FCM Token Updated successfully',
+       user 
+     });
+  }catch(error){
+    return res.status(500).json({
+       message  : "Server Error"
+     })
+  }
+}
+
 export const getMyProfile = (req, res) => {
   try {
     if (req.user !== null) {
@@ -90,7 +113,7 @@ export const getMyProfile = (req, res) => {
       });
     }
     else {
-      return res.status(402).json({
+      return res.status(401).json({
         success: false,
         message: 'Not logged in',
       });
