@@ -1,8 +1,5 @@
 export const authRoutes = {
-  patient: "/patient/register",
-  loginEmail: "/patient/login/email",
-  loginPhone: "/patient/login/phone",
-  otp: "/patient/verify-otp",
+  myprofile : "/users/getMyProfile", 
   sendToken : "/users/add-token"
 };
 

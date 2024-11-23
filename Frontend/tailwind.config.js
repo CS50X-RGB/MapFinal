@@ -11,6 +11,10 @@ module.exports = {
         back: "#000000",
         text: "#82AAFF",
       },
+      text : {
+        back: "#000000",
+        text: "#82AAFF",
+      },
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
         poppins : ['Poppins','sans-serif']

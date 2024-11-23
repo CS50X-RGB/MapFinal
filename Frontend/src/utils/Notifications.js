@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { getToken } from "firebase/messaging";
-import { messaging } from "../firebase";
+import { getMessaging, getToken } from "firebase/messaging";
+import { app } from "../firebase";
 import { postData } from "../core/apiHandler";
 import { authRoutes } from "../core/apiRoutes";
 
@@ -13,13 +13,17 @@ export function requestPermission() {
   })
 }
 
-
+  const messaging = getMessaging(app);
 export default async function sendFirebaseToken() {
-    const m = messaging;
-    return getToken(m, { vapidKey: process.env.FIREBASE_VAPID_KEY })
-        .then((currentToken) => {
+   return getToken(messaging, { vapidKey: "BDKK21GIFafFzHCpKJ2GnsiAf-0woWSadCA2RnR_6bDWh6dOz3JxfmVk2VZOupvcElThwyrJ1ebKto_IfWJU-NY" })
+        .then(async (currentToken) => {
             if (currentToken) {
                  console.log(currentToken,"token");
+                  const token = {
+                    fcmToken : currentToken
+                 }
+               const response = await postData(authRoutes.sendToken,{},token);
+               console.log(response);
             } else {
                 console.log("No Firebase token available. Request permission to generate one.");
             }
@@ -28,14 +32,10 @@ export default async function sendFirebaseToken() {
             console.error("An error occurred while retrieving token: ", err);
         });
 }
-/*
-const sendToken = useMutation({
-   mutationKey : ["sendToken"],
-   mutationFn : async (token) => {
-       const body = {
-         fcmToken : token
-      }
-      return postData(authRoutes.sendToken,{},body);
-   }
-})
-*/
+export async function deleteToken(){
+        return deleteToken(messaging).then(() => {
+            console.log("Delete Token done");
+        }).catch((err) => {
+            console.log('Unable to delete Token',err);
+        })
+}

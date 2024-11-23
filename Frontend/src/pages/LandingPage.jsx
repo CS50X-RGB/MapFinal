@@ -1,14 +1,13 @@
 import "../index.css";
 import logo3 from "./assets/logo.svg";
-import bg from "./assets/bg.svg";
-import Example from "./Accordian.jsx";
 import { Link } from "react-router-dom";
-import { Image, Button } from "@nextui-org/react";
+import { Image, Button,User,Dropdown,DropdownItem,DropdownTrigger,DropdownMenu } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import car from "../assests/car.svg";
 import petrolPump from "../assests/petrolpump.svg";
 import Accordian from "./Accordian.jsx";
 import Footer from "../components/Footer";
+import { useSelector } from "react-redux";
 
 const Faqs = [
   {
@@ -41,14 +40,57 @@ const Faqs1 = [
 ]
 
 function LandingPage() {
+  const {user} = useSelector((state) => state.auth);
+   console.log(user);
   return (
     <div className="color font-poppins">
       <nav className="flex flex-row w-full justify-between">
         <Image src={logo3} width={100} height={100} />
         <div className="flex text-2xl font-poppins font-bold items-center p-4 flex-row text-white gap-4">
-          <Link to={"/login"}>Login</Link>
-          <Link to={"/register"}>Register</Link>
-          <Button className="p-3 font-bold bg-white">Contact Us</Button>
+          {user ? 
+             (
+              <div className="flex flex-row items-center">
+              
+           <Dropdown>
+           <DropdownTrigger>
+             <User   
+                name={user?.name}
+                avatarProps={{
+                   src: user?.profilePic,
+                   size : "lg"
+                 }}
+                 />
+           </DropdownTrigger>
+               <DropdownMenu 
+               classNames={{
+                 base : "bg-back text-text" 
+              }}
+               aria-label="Action event example" 
+             >
+                   <DropdownItem key="main">
+                    <Link to={"/main"}>Get Started</Link>
+                  </DropdownItem>
+                  <DropdownItem key="prices">
+                    <Link to={"/rates"}>Prices</Link>
+                 </DropdownItem>
+                  <DropdownItem key="profile">
+                          <Link to={"/profile"}>Profile</Link>
+                     </DropdownItem>
+                  <DropdownItem key="delete" className="text-danger" color="danger">
+                    Logout
+                  </DropdownItem>
+             </DropdownMenu>
+            </Dropdown>
+             </div> 
+            ): (
+             <div className="flex flex-row">
+               <Link to={"/login"}>Login</Link>
+                <Link to={"/register"}>Register</Link>
+                <Button className="p-3 font-bold bg-white">Contact Us</Button>
+              </div>
+            )
+         }
+
         </div>
       </nav>
       <motion.div

@@ -23,7 +23,7 @@ instance.interceptors.request.use(
   (config) => {
     // const currentUser = localStorage.getItem("currentUserToken");
     // const token = currentUser;
-    const token = localStorage.getItem("currentUser");
+    const token = localStorage.getItem("Map_0_Share");
 
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;

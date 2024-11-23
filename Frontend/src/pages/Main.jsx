@@ -446,7 +446,7 @@ function Main() {
                     tokenSender();
                 }}
                 >
-                  {user.userType === "RegularUser"
+                  {user?.userType === "RegularUser"
                     ? "DriverMode is ON"
                     : "Sharing Mode is ON"}
                 </button>
@@ -456,7 +456,7 @@ function Main() {
                       className="bg-back text-text px-6 py-3"
                       onClick={() => setNeigh(!neigh)}
                     >
-                      {user.userType === "RegularUser"
+                      {user?.userType === "RegularUser"
                         ? "See Near By Users"
                         : "Those who need Resources"}
                     </button>
