@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import connectDB from "./data/database.js";
 import cookieParser from "cookie-parser";
 import UserRouter from "./Router/auth.js";
+import morgan from "morgan";
 import LocationRouter from "./Router/location.js";
 import NotificationRouter from "./Router/notify.js";
 import DataRouter from "./Router/dataPriceFetcher.js";
@@ -27,7 +28,7 @@ app.use(bodyParser.json({ extended: true, parameterLimit: 100, limit: "40mb" }))
 
 
 app.use(express.json({ limit: '50mb' }));
-
+app.use(morgan());
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/location", LocationRouter);
 app.use("/api/v1/notify", NotificationRouter);
@@ -39,7 +40,7 @@ config({
 });
 
 const redis = new Redis(process.env.REDIS_DB);
-export const Firebase = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
 
 
 redis.on('connect', () => {

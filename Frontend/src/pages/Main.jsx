@@ -5,8 +5,8 @@ import maplibreglWorker from "maplibre-gl/dist/maplibre-gl-csp-worker";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "../index.css";
-import { locationRoutes } from "../core/apiRoutes.js";
-import {postData,deleteData} from "../core/apiHandler"
+import { locationRoutes, notifyRoutes } from "../core/apiRoutes.js";
+import {postData,deleteData, getData, putData} from "../core/apiHandler"
 import { fetchPetrolPumps } from "../utils/getPetrolPumps.jsx";
 import {
   PetrolPumpLayer,
@@ -20,8 +20,9 @@ import { useSelector } from "react-redux";
 import { FaRegFaceSmileWink } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import sendFirebaseToken, { requestPermission } from "../utils/Notifications.js";
+import { async } from "@firebase/util";
 
 
 // initializePusher();
@@ -113,7 +114,7 @@ function Main() {
     const intervalId = setInterval(fetchData, 60000);
     return () => clearInterval(intervalId);
   }, []);
-
+  const [r,setR] = useState(100);
   useEffect(() => {
     if (newMap) {
       const handleClick = async (e) => {
@@ -170,29 +171,16 @@ function Main() {
       }
     });
   }
-  async function notiftAllControlNegative(driver) {
-    try {
-      console.log("Hii");
-      const response = await axios.post(
-        "https://maposhare.onrender.com/api/v1/notify/notify",
-        {
-          intersts: "all_drivers",
-          title: `Sorry for the interuptions`,
-          message: `${user.name} will be penalized`,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+  const notiftAllControlNegative = useMutation({
+     mutationKey : ["notifyAllControlNegative"],
+    mutationFn : (userId) => {
+     const body = {
+        userId,
+        message: `${user.name} will be penalized`,
+      }  
+        return postData(notifyRoutes.allNotify,{},body);
     }
-  }
-
+  });
   const antiDriver = useMutation({
      mutationKey: ["antiDriver"],
      mutationFn : () => {
@@ -200,33 +188,21 @@ function Main() {
     }
   });
    const driMode = useMutation({
-      mutationKey : ["dirMode"],
+      mutationKey : ["driMode"],
       mutationFn : () => {
-
             return postData(locationRoutes.updateLoc,{},location);
       }
   })
   const tokenSender = async () => {
       await sendFirebaseToken();
        driMode.mutate();
-  } 
-  const getNeighbours = async (r) => {
-    try {
-      const response = await axios.get(
-        `https://maposhare.onrender.com/api/v1/location/nearby/${r}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      return response;
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
+  }
+ const {data :getNeighbours,isFetched: isFetchedNeigh} = useQuery({
+  queryKey : ["getNeighbours",r],
+  queryFn : () => {
+     return getData(`/location/nearby/${r}`,{}); 
+  },
+ });
   useEffect(() => {
     const intervalId = setInterval(async () => {
       try {
@@ -248,22 +224,20 @@ function Main() {
       notiftAllControlNegative(data);
     }
   }, [notifyAll, data]);
-
+   
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (neigh && driverMode) {
-          const res = await getNeighbours(100);
+          const res = await getNeighbours();
           console.log(res.data.nearbyDrivers);
-          if (res.data) {
+          if (isFetchedNeigh && res.data) {
             const filteredNearbyDrivers = res.data.nearbyDrivers.filter(
               (driver) => Math.abs(driver.distance) > 0.001
             );
             setData(filteredNearbyDrivers);
-            console.log(filteredNearbyDrivers);
             setneighDriver(plotGJSONPoints(filteredNearbyDrivers));
             setData(filteredNearbyDrivers);
-            console.log(filteredNearbyDrivers);
             setneighDriver(plotGJSONPoints(filteredNearbyDrivers));
           }
         }
@@ -288,72 +262,51 @@ function Main() {
     };
   }, []);
 
-
-
-  const cancelTrans = async (driverId) => {
-    try {
-      const selectedDriver = data.find((driver) => driver.userId === driverId);
- //     console.log(selectedDriver.userId);
-      if (selectedDriver) {
-        const response = await axios.put(
-          "https://maposhare.onrender.com/api/v1/users/UnsucessTrans",
-          {
-            id: selectedDriver.userId,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        console.log(response.data.stars.my);
+   const cancelTrans = useMutation({
+     mutationKey  : ["cancelTrans"],
+     mutationFn : (driverId) =>{
+       const selectedDriver = data.find((driver) => driver.userId === driverId); 
+       const body = {
+          id: selectedDriver.userId,
+       }
+      return putData('/users/UnsucessTrans',{},body);
+    },
+    onSuccess : (data) => {
         setId(null);
         setnotifyAll(false);
         setNeigh(false);
         setDriverMode(false);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+   },
+   onError : (error) => {
+       console.error(error);
+     }
+  });
 
-  const successTrans = async (driverId) => {
-    try {
+  const successTrans = useMutation({
+       mutationKey : ["successTrans"],
+       mutationFn : (driverId) => {
       const selectedDriver = data.find((driver) => driver.userId === driverId);
-      console.log(selectedDriver.userId);
-      if (selectedDriver) {
-        const responseSuccess = await axios.put(
-          `https://maposhare.onrender.com/api/v1/users/sucessTrans`,
-          {
-            id: selectedDriver.userId,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-
-        console.log(responseSuccess.data);
+       const body = {
+          id: selectedDriver.userId,
+       }
+      return putData('/users/sucessTrans',{},body);
+    },
+    onSuccess : (data) => {
         setId(null);
         setnotifyAll(false);
         setNeigh(false);
         setDriverMode(false);
-      } else {
-        console.error("Selected driver not found");
-      }
-    } catch (error) {
-      console.error("Error in successTrans:", error);
-    }
-  };
-
+   },
+   onError : (error) => {
+       console.error(error);
+     } 
+  }); 
+ 
   const handleSuccess = async () => {
-    await successTrans(id);
+    await successTrans.mutate(id);
   };
   const Failure = async () => {
-    await cancelTrans(id);
+    await cancelTrans.mutate(id);
   };
   useEffect(() => {
     if (id && cancel && driverMode && neigh) {

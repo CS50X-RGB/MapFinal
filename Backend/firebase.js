@@ -1,16 +1,22 @@
 import admin from "firebase-admin";
-import { initializeApp } from "firebase-admin";
-import { Firebase } from "./server";
+import { config } from "dotenv";
+import fs from "fs";
+
+config({
+  path: "./data/config.env",
+});
+
+const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 
-var serviceAccount = require(Firebase);
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-initializeApp({ 
+admin.initializeApp({ 
   credential: admin.credential.cert(serviceAccount),
 });
 
 
-export const singleMessaging = (token,message) => {
+export const singleMessaging = async (token,message) => {
    const messagestruct = {
     data :
     {
@@ -18,7 +24,7 @@ export const singleMessaging = (token,message) => {
     },
     token : token
    }
-   admin.messaging().send(messagestruct).then((response) => {
+   await admin.messaging().send(messagestruct).then((response) => {
     console.log(`Notification send`,response);
   }).catch((error) => {
       console.error('Error sending notification:', error);

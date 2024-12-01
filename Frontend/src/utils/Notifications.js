@@ -23,7 +23,6 @@ export default async function sendFirebaseToken() {
                     fcmToken : currentToken
                  }
                const response = await postData(authRoutes.sendToken,{},token);
-               console.log(response);
             } else {
                 console.log("No Firebase token available. Request permission to generate one.");
             }

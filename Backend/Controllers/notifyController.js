@@ -1,36 +1,62 @@
 import PushNotifications from "@pusher/push-notifications-server";
+import User from "../Models/user.js";
+import { multiMessaging, singleMessaging } from "../firebase.js";
 
-
+/*
 const beamsClient = new PushNotifications({
         instanceId: "c41a756e-0c26-4252-9373-43bff3466a8b",
         secretKey: "B28F08010F5773E93A0CD71CC50B528AED7A6ACFAB2D95BAA2541B8559C2E51B",
 });
-
+*/
+export const sendNotificationAll = async (req,res) => {
+     try {
+        const {userIds,message} = req.body;
+        const users = await User.find({
+             _id : {$in : userIds}
+          }, 'fcmToken');
+        const tokens = users.map(user => user.fcmToken).filter(token => token);
+        if(tokens.length == 0){
+          return res.status(404).json({
+             success : false,
+             message : 'No FCM Tokens found'
+          })
+        }
+        const multi = await multiMessaging(tokens,message); 
+        console.log(multi);
+        return res.status(200).json({
+               success : true,
+               message : "Notifications Sent"
+        })
+     } catch (error) {
+        return res.status(500).json({
+            success   : false,
+            err : error,
+            message : "Internal Server Error"
+       }); 
+     }
+}
 
 export const sendNotification = async (req, res) => {
         try {
-                const { intersts, title, message } = req.body;
-                console.log(typeof (intersts));
-                const publishResponse = await beamsClient.publishToInterests(
-                        [intersts],
-                        {
-                                web: {
-                                        notification: {
-                                                title: title,
-                                                body: message,
-                                                deep_link: "https://map-0-share.vercel.app/main",
-                                        },
-                                },
-                        }
-                );
-
-                console.log("Sent notification", publishResponse);
-                res.status(200).json({
+              const { userId, message } = req.body;
+              const token = await User.findById(userId,'fcmToken');
+              const messaging = singleMessaging(token,message);
+              if(!messaging || !token){
+                    return res.status(400).json({
+                        success : false,
+                        err : "Sending message failed or token not found for user",
+                        message: 'Notification sent failed',
+              });
+              }
+              return res.status(200).json({
+                        success : true,
                         message: 'Notification sent',
-                })
-        } catch (error) {
-                console.error("Error sending notification:", error);
-                res.status(500).json({ error: "Internal Server Error" });
+              });
+        } catch (error) { 
+                return res.status(500).json({
+                success : false,
+                error: "Internal Server Error"
+            });
         }
 }
 
