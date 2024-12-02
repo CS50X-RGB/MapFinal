@@ -4,7 +4,6 @@ import { CgProfile } from "react-icons/cg";
 import { IoPricetagsSharp } from "react-icons/io5";
 
 export const GlbobalNavBar = () =>{
-
         return (
                 <>
                 <div className="flex max-w-[100%] fixed bottom-0 rounded-t-full p-[4vh] justify-around gap-2 bg-[#173049] w-full ">

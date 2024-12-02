@@ -1,17 +1,10 @@
-import axios from "axios";
-import { localUrl } from "./Resgister";
+import { getData } from "../../core/apiHandler";
+import { authRoutes } from "../../core/apiRoutes";
+
 
 const ProfileAxios = async () => {
   try {
-    const response = await axios.get(
-      `${localUrl}/users/getMyProfile`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
+    const response  = await getData(authRoutes.myprofile,{},{});
     return response;
   } catch (err) {
     console.error(err);

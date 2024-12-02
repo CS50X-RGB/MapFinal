@@ -4,7 +4,7 @@ import { getFuelPrices } from '../Controllers/dataFect.js';
 const router = express.Router();
 
 
-router.get("/fetchPrices",isAuth, getFuelPrices);
+router.get("/fetchPrices", getFuelPrices);
 
 
 export default router;

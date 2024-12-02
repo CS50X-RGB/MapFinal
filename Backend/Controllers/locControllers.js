@@ -1,7 +1,6 @@
 import redis from "../server.js";
 
 export const UpdateLoc = async (req, res) => {
-    console.log(req.body);
     try {
         const { latitude, longitude } = req.body;
         await redis.geoadd('driverLocations', longitude, latitude, String(req.user._id));
@@ -26,17 +25,13 @@ export const UpdateLoc = async (req, res) => {
 
 
 export const getNearby = async (req, res) => {
-    console.log(req.params.r);
     try {
         const { r } = req.params;
         const userId = String(req.user._id);
-        console.log(userId);
         const userLoc = await redis.geopos('driverLocations', userId);
-        console.log(userLoc);
+
         const [lon, lat] = userLoc[0];
-        console.log('Longitude:', lon);
-        console.log('Latitude:', lat);
-        console.log('Radius:', parseFloat(r));
+ 
 
         const nearbyDrivers = await redis.georadius(
             'driverLocations',
@@ -52,6 +47,9 @@ export const getNearby = async (req, res) => {
                 const userId = driver[0];
                 if (userId === req.params.userId) {
                     return null;
+                }
+                if(userId === req.user._id){
+                   return null;
                 }
                 const [driverLon, driverLat] = await redis.geopos('driverLocations', userId);
                 const userData = await redis.hget('userData', userId);

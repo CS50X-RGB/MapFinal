@@ -6,6 +6,8 @@ import { FaPencilAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import GlbobalNavBar from "../components/globalNavBar";
+import { Image,Input,Button } from "@nextui-org/react";
+import { putData } from "../core/apiHandler";
 
 function Profile() {
   const [image, setImage] = useState(null);
@@ -20,6 +22,7 @@ function Profile() {
   const [editPhone, setEditPhone] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [imageUpdated, setImageUpdated] = useState(false);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -78,23 +81,14 @@ function Profile() {
 
   const handleUpdateDetails = async () => {
     try {
-      const res = await axios.put(
-        "https://maposhare.onrender.com/api/v1/users/resetDetails",
-        {
+      const body = {
           name: edit ? name : undefined,
           email: editEmail ? email : undefined,
           phone: editPhone ? phone : undefined,
           profilePic: imageUpdated ? image : undefined,
           dLNo: editLic ? license : undefined,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
+      }
+      const res = await putData("/users/resetDetails",{},body);  
       if (res.data.success) {
         console.log("User details updated successfully!");
         setOriginalImage(res.data.user.profilePic);
@@ -131,9 +125,10 @@ function Profile() {
           >
             {image ? (
               <>
-                <img
+                <Image
                   src={user.profilePic}
                   alt="ProfileImage"
+                  sizes=""
                   className="w-full h-full object-cover"
                 />
                 <IoMdAdd
@@ -169,17 +164,18 @@ function Profile() {
                     onChange={(e) => setName(e.target.value)}
                     className="w-full flex flex-row justify-center items-center gap-4 rounded border border-text p-2 text-xl text-back bg-text"
                   />  
-                  <button
+                  <Button
+                    isIconOnly
                     onClick={handleEditToggle}
-                    className="fill-blue-500"
+                    className="bg-inherit fill-blue-500 hover:bg-back hover:fill-black"
                     type="button"
                   >
                     <FaPencilAlt size={34} />
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <span className="text-md font-ostwald md:text-2xl">Hi! {user.name}</span>
+                  <span className="text-md font-ostwald md:text-2xl">{user.name}</span>
                   <button
                     onClick={handleEditToggle}
                     className="fill-text"

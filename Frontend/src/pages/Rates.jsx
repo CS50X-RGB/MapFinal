@@ -1,8 +1,9 @@
 import Logo from "../logo.svg";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import GlbobalNavBar from "../components/globalNavBar";
 import { Link } from "react-router-dom";
+import { getData } from "../core/apiHandler";
+import {Image, TableHeader,Table,TableColumn,TableCell,TableBody,TableRow } from "@nextui-org/react";
 
 export const Prices = () => {
   const [petrolPrices, setPetrolPrice] = useState([]);
@@ -12,15 +13,7 @@ export const Prices = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://maposhare.onrender.com/api/v1/data/fetchPrices",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
+        const response = await getData("/data/fetchPrices"); 
         setPetrolPrice(response.data.petrolPrices);
         setDiselPrice(response.data.dieselPrices);
         setLoading(false);
@@ -34,57 +27,67 @@ export const Prices = () => {
 
   return (
     <>
-      <Link to={"/"} className="flex flex-col bg-black p-2">
-        <img src={Logo} alt="Logo" className="rounded-full w-20 h-20 mt-4" />
+      <Link to={"/"} className="flex flex-col  bg-black p-2">
+      <div className="flex flex-col items-center w-1/4 justify-center">
+        <Image src={Logo} alt="Logo" className="rounded-full w-20 h-20" />
         <h1 className="text-text shadow-2xl shadow-text font-mono text-lg md:text-xl font-extrabold">
           MAP-0-SHARE
         </h1>
+      </div>
       </Link>
       {loading ? (
         <p className="flex justify-center items-center font-mono">Loading...</p>
       ) : (
         <>
-          <h1 className="bg-back font-mono flex justify-center text-text">
-            Petrol Prices in INDIA
+          <h1 className="bg-back font-mono font-bold text-3xl p-5 flex justify-center  text-text">
+            Petrol Prices in INDIA (STATE WISE)
           </h1>
-          <div className="flex flex-col justify-center items-center bg-back">
-            <table className="font-mono font-fixed bg-back text-text border-separate border-spacing-2 border-text shadow-xl shadow-text rounded-xl">
-              <thead>
-                <tr>
-                  <th className="border border-text">State</th>
-                  <th className="border border-text"> Price</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="flex px-8 flex-col justify-center items-center bg-back">
+            <Table classNames={{
+                base : "bg-back w-1/2 text-text font-mono",
+                th : "bg-text text-xl font-mono text-back  font-bold"
+             }} removeWrapper aria-label="Petrol Prices" className="font-mono font-fixed shadow-xl shadow-text rounded-2xl">
+              <TableHeader>
+                  <TableColumn>State</TableColumn>
+                  <TableColumn> Price</TableColumn>
+              </TableHeader>
+              <TableBody> 
                 {petrolPrices.map((price, index) => (
-                  <tr key={index}>
-                    <td className="border border-text">
+                <TableRow key={index}>
+                    <TableCell className="text-xl border-b border-r border-text font-mono">
                       {price.state}
-                    </td>
-                    <td className="border border-text">
+                    </TableCell>
+                    <TableCell className="text-xl border-b border-text font-mono">
                       {price.price}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-            <h1 className="bg-back text-text p-3 flex justify-center font-mono">Diesel Prices Across INDIA</h1>
-            <table className="font-mono font-fixed bg-back text-text border-separate border-spacing-2 border-text shadow-xl shadow-text">
-              <thead>
-                <tr>
-                  <th className="border border-text">State</th>
-                  <th className="border border-text">Price</th>
-                </tr>
-              </thead>
-              <tbody>
+              </TableBody>
+            </Table>
+       <h1 className="bg-back font-mono font-bold text-3xl p-5 flex justify-center  text-text">
+            Diesel Prices in INDIA (STATE WISE)
+          </h1>
+          <Table classNames={{
+                base : "bg-back w-1/2 text-text font-mono",
+                th : "bg-text text-xl font-mono text-back  font-bold"
+             }} removeWrapper aria-label="Petrol Prices" className="font-mono font-fixed shadow-xl shadow-text rounded-2xl">
+              <TableHeader>
+                  <TableColumn>State</TableColumn>
+                  <TableColumn> Price</TableColumn>
+              </TableHeader>
+              <TableBody> 
                 {diselPrice.map((price, index) => (
-                  <tr key={index}>
-                    <td className="border border-text">{price.state}</td>
-                    <td className="border border-text">{price.price}</td>
-                  </tr>
+                <TableRow key={index}>
+                    <TableCell className="text-xl border-b border-r border-text font-mono">
+                      {price.state}
+                    </TableCell>
+                    <TableCell className="text-xl border-b border-text font-mono">
+                      {price.price}
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table> 
           </div>
         </>
       )}

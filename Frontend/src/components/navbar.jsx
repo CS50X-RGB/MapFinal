@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, logout } from "../cart/authSlice";
 import { Card, CardBody,Avatar, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
-
+import { Spinner } from "@nextui-org/react";
 
 export default function Navbar({ children }) {
   const dispatch = useDispatch();
@@ -44,8 +44,8 @@ export default function Navbar({ children }) {
   };
 
   if (loading) {
-    return <div className="flex flex-row justify-center items-center h-full">
-      <h4 className="text-xl font-mono">Loading...</h4>
+    return <div className="flex flex-row justify-center w-full items-center h-full">
+       <Spinner label="Fetching Prices" /> 
     </div>;
   }
 
@@ -65,7 +65,6 @@ export default function Navbar({ children }) {
             </div>
             {children}
             <Button
-
               onPress={onOpen}
               className="bg-text text-back px-3 py-1 rounded-md"
             >

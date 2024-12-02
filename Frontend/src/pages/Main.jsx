@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Map, NavigationControl, Marker, Popup } from "react-map-gl";
+import { Button ,Spinner,Modal,Avatar,User, ModalContent,Table,TableColumn,TableHeader,TableBody,TableRow, ModalHeader, ModalBody, ModalFooter,TableCell, useDisclosure} from "@nextui-org/react";
 import Navbar from "../components/navbar.jsx";
 import maplibreglWorker from "maplibre-gl/dist/maplibre-gl-csp-worker";
 import maplibregl from "maplibre-gl";
@@ -15,14 +16,12 @@ import {
 } from "../utils/PetrolPumps.jsx";
 import LatLonToKM from "../utils/LatLonToKM.jsx";
 import { fetchChargingStations } from "../utils/getChargingPoints.jsx";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { FaRegFaceSmileWink } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
-import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import sendFirebaseToken, { requestPermission } from "../utils/Notifications.js";
-import { async } from "@firebase/util";
+
 
 
 // initializePusher();
@@ -64,7 +63,6 @@ const plotGJSONPoints = (points) => {
 };
 
 function Main() {
-  const [intial, setIntial] = useState(false);
   const [data, setData] = useState(null);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [err, setError] = useState(null);
@@ -82,6 +80,7 @@ function Main() {
   const [newMap, setNewMap] = useState(null);
   const [driverMode, setDriverMode] = useState(false);
   const [neigh, setNeigh] = useState(false);
+ const {isOpen : isOpenNeigh, onOpen : onOpenNeigh, onOpenChange : onOpenChangeNeigh} = useDisclosure();
   const [neighDriver, setneighDriver] = useState(null);
   const [theme, setTheme] = useState("streets-v2");
   const { user } = useSelector((state) => state.auth);
@@ -89,7 +88,13 @@ function Main() {
   const [cancel, setCancel] = useState(false);
   const [notifyAll, setnotifyAll] = useState(false);
   const [id, setId] = useState(null);
-
+  const columns = [
+    "User Name",
+     "Phone",
+     "Distance",
+     "Driving License",
+     "Actions" 
+  ]
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -146,31 +151,18 @@ function Main() {
       };
     }
   }, [newMap]);
-
-  async function notifyAllControlPostive(driver) {
-    driver.map(async (d) => {
-      try {
-        const response = await axios.post(
-          "https://maposhare.onrender.com/api/v1/notify/notify",
-          {
-            intersts: "all_drivers",
-            title: `${d.name} Someone needs your help`,
+  const notifyAllControlPostive = useMutation({
+     mutationKey : ["notifyAllControlPostive"],
+      mutationFn : (data) => { 
+        const userId = data.map(item => item.userId);
+        const body ={
+            userId,
             message: `${user.name} wants help for more details you can call on ${user.phoneno} 
-                          he is ${d.distance} Km away from your current location`,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  }
+              the consumer is ${data.distance} Km away from your current location`,
+       }
+       return postData(notifyRoutes.allNotify,{},body);
+     } 
+  })
   const notiftAllControlNegative = useMutation({
      mutationKey : ["notifyAllControlNegative"],
     mutationFn : (userId) => {
@@ -197,7 +189,7 @@ function Main() {
       await sendFirebaseToken();
        driMode.mutate();
   }
- const {data :getNeighbours,isFetched: isFetchedNeigh} = useQuery({
+ const {data :getNeighbours,isFetching : isFetchingNeigh,isFetched: isFetchedNeigh} = useQuery({
   queryKey : ["getNeighbours",r],
   queryFn : () => {
      return getData(`/location/nearby/${r}`,{}); 
@@ -219,9 +211,9 @@ function Main() {
 
   useEffect(() => {
     if (notifyAll === true && driverMode && neigh) {
-      notifyAllControlPostive(data);
+      notifyAllControlPostive.mutate(data);
     } else if (notifyAll === false && driverMode && neigh) {
-      notiftAllControlNegative(data);
+      notiftAllControlNegative.mutate(data);
     }
   }, [notifyAll, data]);
    
@@ -229,8 +221,8 @@ function Main() {
     const fetchData = async () => {
       try {
         if (neigh && driverMode) {
-          const res = await getNeighbours();
-          console.log(res.data.nearbyDrivers);
+          const res = getNeighbours;
+          onOpenNeigh(); 
           if (isFetchedNeigh && res.data) {
             const filteredNearbyDrivers = res.data.nearbyDrivers.filter(
               (driver) => Math.abs(driver.distance) > 0.001
@@ -322,7 +314,9 @@ function Main() {
 
   if (!location.latitude || !location.longitude) {
     return (<div className="flex flex-col justify-center items-center h-[100vh]">
-      <h1 className="text-2xl font-mono font-bold"> Loading...</h1>
+      <h1 className="text-2xl font-mono font-bold">
+            <Spinner  />
+        </h1>
     </div>
     );
 
@@ -378,45 +372,44 @@ function Main() {
         </Map>
         <Navbar>
           <>
-            <button
+            <Button
               onClick={() => setActive(!active)}
               className="bg-back text-text px-6 py-3"
             >
               See Liquid Resources
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setActive1(!active1)}
               className="bg-back text-text px-6 py-3"
             >
               See electric{" "}
-            </button>
+            </Button>
             {driverMode ? (
               <>
-                <button
+                <Button
                   className="bg-back text-text px-6 py-3"
-                  onClick={() =>{
-                     setDriverMode(!driverMode);
-                    tokenSender();
+                  onPress={() =>{
+                   setDriverMode(!driverMode);
                 }}
                 >
                   {user?.userType === "RegularUser"
                     ? "DriverMode is ON"
                     : "Sharing Mode is ON"}
-                </button>
+                </Button>
                 {!neigh ? (
                   <>
-                    <button
+                    <Button
                       className="bg-back text-text px-6 py-3"
                       onClick={() => setNeigh(!neigh)}
                     >
                       {user?.userType === "RegularUser"
                         ? "See Near By Users"
                         : "Those who need Resources"}
-                    </button>
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <button
+                    <Button
                       className="bg-back text-text px-6 py-3"
                       onClick={() => {
                         antiDriver.mutate();
@@ -424,25 +417,31 @@ function Main() {
                       }}
                     >
                       Switch Off
-                    </button>
+                    </Button>
                   </>
                 )}
               </>
             ) : (
-              <button
+              <Button
                 className="bg-back text-text px-6 py-3"
                 onClick={() => {
+                    tokenSender();
                   setDriverMode(!driverMode);
                 }}
               >
                 Driver Mode is OFF
-              </button>
+              </Button>
             )}
           </>
-          {driverMode && neigh && data && data.length !== 0 && (
+          <Modal size="full" className="bg-back w-full h-full flex justify-center" isOpen={isOpenNeigh} onOpenChange={onOpenChangeNeigh}>
+          <ModalContent>
+          {(onClose) => (
+          <>
+          <ModalHeader className="text-text text-2xl font-mono">User Details</ModalHeader>
+          {isFetchedNeigh ? (
             <div className="font-mono text-text bg-back z-4">
               {!notifyAll && (
-                <button
+                <Button
                   className="bg-text text-back px-4 py-2 rounded-xl m-2"
                   onClick={() => {
                     notifyAllControlPostive();
@@ -450,57 +449,77 @@ function Main() {
                   }}
                 >
                   Notify Everyone
-                </button>
+                </Button>
               )}
               {notifyAll && (
                 <>
-                  <button
+                  <Button
                     className="bg-text text-back px-4 py-2 rounded-xl m-2"
                     onClick={() => setnotifyAll(false)}
                   >
                     Interupt the process
-                  </button>
+                  </Button>
                 </>
               )}
-              <table className="text-auto mx-4 rounded-xl border-separate border-spacing-2 border border-text">
-                <thead className="text-2xl">
-                  <tr className=" bg-text text-back">
-                    <th className="border-b border-t border-text">
-                      ProfilePic
-                    </th>
-                    <th className="border-b border-t border-text">Name</th>
-                    <th className="border-b border-t border-text">Phone</th>
-                    <th className="border-b border-t border-text">Distance</th>
-                    <th className="border-b border-t border-text">DL No</th>
-                  </tr>
-                </thead>
-                <tbody className="font-mono text-lg">
-                  {data.map((driver) => (
-                    <tr key={driver.userId}>
-                      <td>
-                        <img
-                          src={driver.profilePic}
-                          alt="ProfilePic"
-                          className="h-[10vh] rounded-full border-2 border-text/70"
+            <ModalBody>
+              <Table removeWrapper classNames={{
+                 base : "bg-back b-0 m-0 p-0",
+                td : "text-md lg:text-lg font-semibold",
+                 table : "bg-back shadow-xl shadow-blue-500 rounded-xl",
+                 th : "bg-back text-text border-b border-blue-400 py-5 font-mono text-2xl font-bold"
+              }}>
+                <TableHeader className="text-2xl"> 
+                    {columns.map((c,index) => {
+                         return <TableColumn key={index}>{c}</TableColumn>
+                     })}
+                </TableHeader>
+                {data && data?.length > 0 ? 
+                <TableBody className="font-mono bg-back text-2xl">
+                  {data?.map((driver) => (
+                    <TableRow key={driver.userId}>
+                      <TableCell>
+                        <User
+                         name={driver.name}
+                         avatarProps={{
+                             src : driver?.profilePic,
+                            size : "lg"
+                          }}
+                          alt="ProfilePic" 
+                          className="rounded-full text-xl"
                         />
-                      </td>
-                      <td className="border-r border-l border-text px-2 cursor-pointer">
-                        {driver.name}
-                      </td>
-                      <td className="border-r  border-text cursor-pointer">
+                      </TableCell>
+                      <TableCell className="cursor-pointer">
                         {driver.phone}
-                      </td>
-                      <td className="border-r border-text cursor-pointer">
-                        {driver.distance} Km
-                      </td>
-                      <td className="border-r border-text cursor-pointer">
+                      </TableCell>
+                      <TableCell className="cursor-pointer">
+                        {driver.distance} Km away
+                      </TableCell>
+                      <TableCell className="cursor-pointer">
                         {driver.dlNo}
-                      </td>
-                      <td>
+                      </TableCell>
+                      <TableCell>
+                           <Button className="bg-text text-back shadow-xl">
+                                Notfiy User{" "}
+                            </Button>
                         {notifyAll && (
                           <>
+                             <Button
+                             className="bg-text text-text"
+                                onClick={() => {
+                                  setSucc(true);
+                                  setId(driver.userId);
+                                  successTrans(driver.userId);
+                                }}
+                              >
+                                Deal Done{" "}
+                                <FaRegFaceSmileWink
+                                  className="fill-back hover:fill-text"
+                                  size={23}
+                                />
+                              </Button>
+ 
                             <div className="flex flex-row">
-                              <button
+                              <Button
                                 className="bg-text text-back flex flex-row m-1 hover:bg-back rounded-xl px-2 py-4 hover:text-text"
                                 onClick={() => {
                                   setCancel(true);
@@ -513,8 +532,8 @@ function Main() {
                                   className="fill-back hover:fill-text"
                                   size={23}
                                 />
-                              </button>
-                              <button
+                              </Button>
+                              <Button
                                 className="bg-text text-back flex flex-row m-1 hover:bg-back rounded-xl px-2 py-4  hover:text-text"
                                 onClick={() => {
                                   setSucc(true);
@@ -527,24 +546,36 @@ function Main() {
                                   className="fill-back hover:fill-text"
                                   size={23}
                                 />
-                              </button>
+                              </Button>
                             </div>
                           </>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+           : <TableBody emptyContent={"No Users are near You"}/>
+              }
+              </Table>
+            </ModalBody>
             </div>
-          )}
+          ): (
+             <Spinner className="font-mono" classNames={{
+                     circle1 : "bg-text",
+                     label : "text-text text-xl"
+              }} label="Loading Users Details" />
+        )} 
+      </>
+       )}
+      </ModalContent>
+        </Modal>
           {theme === "streets-v2" ? (
-            <button
+            <Button
               className="bg-back text-text flex flex-row justify-center px-6 py-3 rounded-xl"
               onClick={() => setTheme("streets-v2-dark")}
             >
               Select Dark Theme
-            </button>
+            </Button>
           ) : (
             <button
               className="bg-back text-text flex flex-row justify-center px-6 py-3 rounded-xl"
