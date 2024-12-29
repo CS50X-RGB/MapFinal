@@ -83,7 +83,7 @@ function LandingPage() {
             </Dropdown>
              </div> 
             ): (
-             <div className="flex flex-row">
+             <div className="flex flex-row text-md gap-2 items-center">
                <Link to={"/login"}>Login</Link>
                 <Link to={"/register"}>Register</Link>
                 <Button className="p-3 font-bold bg-white">Contact Us</Button>
@@ -101,7 +101,7 @@ function LandingPage() {
         <h1>Sharing Resources to Create</h1>
         <h1>Shared Moments,That</h1>
         <h1>Catalyst A <span className="text-[#051937]">Positive Change</span></h1>
-        <p className="text-lg text-center bg-clip-text text-transparent bg-gradient-to-tr from-black to-blue-800">
+        <p className="text-lg text-center px-[10rem] bg-clip-text text-transparent bg-gradient-to-tr from-black to-blue-800">
           Map-O-Share Ignite compassion on the road.
           Share a drop, be a driving force.
           Fuel the journey of kindness, connecting drivers in need with a community that cares. Together, we turn every drive into a shared

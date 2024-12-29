@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Map, NavigationControl, Marker, Popup } from "react-map-gl";
-import { Button ,Spinner,Modal,Avatar,User, ModalContent,Table,TableColumn,TableHeader,TableBody,TableRow, ModalHeader, ModalBody, ModalFooter,TableCell, useDisclosure} from "@nextui-org/react";
+import { Button ,Spinner,Modal,Avatar,User, ModalContent,Table,TableColumn,TableHeader,TableBody,TableRow, ModalHeader, ModalBody, ModalFooter,TableCell, useDisclosure,Switch} from "@nextui-org/react";
 import Navbar from "../components/navbar.jsx";
+import { MoonIcon,SunIcon } from "../assests/Icons.jsx";
 import maplibreglWorker from "maplibre-gl/dist/maplibre-gl-csp-worker";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -418,6 +419,7 @@ function Main() {
                     >
                       Switch Off
                     </Button>
+                   <Switch></Switch>
                   </>
                 )}
               </>
@@ -574,17 +576,17 @@ function Main() {
               className="bg-back text-text flex flex-row justify-center px-6 py-3 rounded-xl"
               onClick={() => setTheme("streets-v2-dark")}
             >
-              Select Dark Theme
+              <MoonIcon /> Select Dark Theme
             </Button>
           ) : (
-            <button
+            <Button
               className="bg-back text-text flex flex-row justify-center px-6 py-3 rounded-xl"
               onClick={() => setTheme("streets-v2")}
             >
-              Select Light Theme
-            </button>
+             <SunIcon /> Select Light Theme
+            </Button>
           )}
-        </Navbar>
+         </Navbar>
       </div>
     </>
   );
