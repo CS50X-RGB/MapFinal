@@ -22,6 +22,10 @@ export const singleMessaging = async (token,message) => {
     {
       message
     },
+    notification: {
+      title: 'Map-0-Share',  
+       body: message  
+    },
     token : token
    }
    await admin.messaging().send(messagestruct).then((response) => {

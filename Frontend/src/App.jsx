@@ -3,16 +3,18 @@ import Main from "./pages/Main.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import "./index.css";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import Profile from "./pages/Profile.jsx";
 import ForgotPassword from "./pages/FogotPassword.jsx";
 import { ResetPassword } from "./pages/ResetPassword.jsx";
 import Prices from "./pages/Rates.jsx";
 import Home from "./pages/LandingPage.jsx";
 
+
 export default function App() {
   const { isAuth } = useSelector((state) => state.auth); 
-  console.log(isAuth);
+
+  
   return (
     <Routes>
       {isAuth  ? (

@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { getMessaging, getToken } from "firebase/messaging";
 import { app } from "../firebase";
 import { postData } from "../core/apiHandler";
@@ -23,6 +22,7 @@ export default async function sendFirebaseToken() {
                     fcmToken : currentToken
                  }
                const response = await postData(authRoutes.sendToken,{},token);
+               console.log(response);
             } else {
                 console.log("No Firebase token available. Request permission to generate one.");
             }

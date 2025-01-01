@@ -39,8 +39,9 @@ export const sendNotificationAll = async (req,res) => {
 export const sendNotification = async (req, res) => {
         try {
               const { userId, message } = req.body;
-              const token = await User.findById(userId,'fcmToken');
-              const messaging = singleMessaging(token,message);
+              const { fcmToken } = await User.findById(userId,'fcmToken');
+              const messaging = await singleMessaging(fcmToken,message);
+              console.log(messaging,"messaging");
               if(!messaging || !token){
                     return res.status(400).json({
                         success : false,

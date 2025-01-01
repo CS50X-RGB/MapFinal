@@ -152,9 +152,21 @@ function Main() {
       };
     }
   }, [newMap]);
+  const notifySingle = useMutation({
+    mutationKey : ["notifySingle"],
+    mutationFn : (user) => {
+      const body = {
+        userId : user.userId,
+        message: `${user.name} wants help for more details you can call on ${user.phoneno} 
+              the consumer is ${user.distance} Km away from your current location`,
+      }
+      return postData(notifyRoutes.singleNotify,{},body);
+    }
+  })
   const notifyAllControlPostive = useMutation({
      mutationKey : ["notifyAllControlPostive"],
-      mutationFn : (data) => { 
+      mutationFn : (data) => {
+        console.log(data);
         const userId = data.map(item => item.userId);
         const body ={
             userId,
@@ -211,9 +223,9 @@ function Main() {
   }, [driverMode]);
 
   useEffect(() => {
-    if (notifyAll === true && driverMode && neigh) {
+    if (notifyAll && driverMode && neigh) {
       notifyAllControlPostive.mutate(data);
-    } else if (notifyAll === false && driverMode && neigh) {
+    } else if (!notifyAll && driverMode && neigh) {
       notiftAllControlNegative.mutate(data);
     }
   }, [notifyAll, data]);
@@ -314,13 +326,13 @@ function Main() {
   }, [id, succ, neigh, driverMode]);
 
   if (!location.latitude || !location.longitude) {
-    return (<div className="flex flex-col justify-center items-center h-[100vh]">
+    return (
+    <div className="flex bg-background flex-col justify-center items-center h-[100vh]">
       <h1 className="text-2xl font-mono font-bold">
-            <Spinner  />
+            <Spinner title="Loading Details" />
         </h1>
     </div>
     );
-
   }
 
   return (
@@ -419,7 +431,6 @@ function Main() {
                     >
                       Switch Off
                     </Button>
-                   <Switch></Switch>
                   </>
                 )}
               </>
@@ -500,7 +511,9 @@ function Main() {
                         {driver.dlNo}
                       </TableCell>
                       <TableCell>
-                           <Button className="bg-text text-back shadow-xl">
+                           <Button onClick={() => {
+                                  notifySingle.mutate(driver);
+                           }} className="bg-text text-back shadow-xl">
                                 Notfiy User{" "}
                             </Button>
                         {notifyAll && (

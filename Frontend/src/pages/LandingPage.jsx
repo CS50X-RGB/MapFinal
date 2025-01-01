@@ -7,7 +7,8 @@ import car from "../assests/car.svg";
 import petrolPump from "../assests/petrolpump.svg";
 import Accordian from "./Accordian.jsx";
 import Footer from "../components/Footer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { reset } from "../cart/authSlice";
 
 const Faqs = [
   {
@@ -41,16 +42,16 @@ const Faqs1 = [
 
 function LandingPage() {
   const {user} = useSelector((state) => state.auth);
-   console.log(user);
+    const dispatch = useDispatch(); 
+ 
   return (
     <div className="color font-poppins">
       <nav className="flex flex-row w-full justify-between">
         <Image src={logo3} width={100} height={100} />
-        <div className="flex text-2xl font-poppins font-bold items-center p-4 flex-row text-white gap-4">
-          {user ? 
+        <div className="flex text-md md:text-2xl font-poppins font-bold items-center p-4 flex-row text-white gap-4">
+          {(Object.keys(user).length !== 0) ? 
              (
-              <div className="flex flex-row items-center">
-              
+              <div className="flex flex-row items-center"> 
            <Dropdown>
            <DropdownTrigger>
              <User   
@@ -97,25 +98,23 @@ function LandingPage() {
         initial={{ x: '-100vw' }}
         animate={{ x: 0 }}
         transition={{ delay: 2, type: 'spring', stiffness: 120 }}
-        className="flex flex-col gap-[1rem] md:gap-[2rem] text-white text-3xl md:text-5xl font-extrabold  items-center justify-center h-[30vh] md:h-[40vh]">
+        className="flex flex-col gap-[1rem] md:gap-[2rem] text-white text-2xl md:text-5xl font-extrabold  items-center justify-center h-[30vh] md:h-[40vh]">
         <h1>Sharing Resources to Create</h1>
         <h1>Shared Moments,That</h1>
         <h1>Catalyst A <span className="text-[#051937]">Positive Change</span></h1>
-        <p className="text-lg text-center px-[10rem] bg-clip-text text-transparent bg-gradient-to-tr from-black to-blue-800">
+        <p className="text-sm md:text-lg text-center px-[10rem] bg-clip-text text-transparent bg-gradient-to-tr from-black to-blue-800">
           Map-O-Share Ignite compassion on the road.
           Share a drop, be a driving force.
           Fuel the journey of kindness, connecting drivers in need with a community that cares. Together, we turn every drive into a shared
           adventure of generosity and support.</p>
       </motion.div>
       <div className="flex p-[.4rem] md:p-[2rem] flex-row items-start ml-[8rem] md:ml-[10rem]">
-        <motion.button
+        <motion.button onClick={() => dispatch(reset())}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="px-[2rem] md:px-[4rem] rounded-xl justify-self-start py-[1rem] text-xl border-dotted border-4 border-sky-500 bg-gradient-to-r from-blue-400 to-pink-200
+          className="px-[2rem] md:px-[4rem] rounded-xl justify-self-start py-[1rem] text-lg md:text-xl border-dotted border-4 border-sky-500 bg-gradient-to-r from-blue-400 to-pink-200
           text-blue-800 border-dotted font-bold">
-          <Link to="/register">
             Start Now
-          </Link>
         </motion.button>
       </div>
       <div className="flex  flex-col md:flex-row justify-around w-full items-center">

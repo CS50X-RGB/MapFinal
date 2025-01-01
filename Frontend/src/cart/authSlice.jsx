@@ -1,34 +1,38 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
-const initialAuthState = Cookies.get("auth") === "true";
+const initialAuthState = localStorage.getItem("Map_0_Share");
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isAuth: initialAuthState,
-    user: {}
+    token: initialAuthState !== "undefined" ? initialAuthState : null,
+    isAuth: !!initialAuthState && initialAuthState !== "undefined",
+    user: null, // Use `null` to indicate no user data initially
   },
   reducers: {
     login: (state, action) => {
-      console.log(action.payload,"Token in slice");
+      const { user } = action.payload; 
+      console.log(action.payload, "Token in slice");
+      
       state.isAuth = true;
-      state.user = action.payload;
-      if (localStorage.getItem("Map_0_Share") !== "undefined") {
-        Cookies.set("auth", true, { sameSite: "None", secure: true });
-      }
+      state.user = user || {}; 
+      state.token = localStorage.getItem("Map_0_Share");
     },
-    logout: (state, action) => {
+    logout: (state) => {
       state.isAuth = false;
       state.user = null;
-      if (localStorage.getItem("Map_0_Share") !== "undefined") {
-        Cookies.set("auth", false, { sameSite: "None", secure: true });
-      }
-      localStorage.removeItem("Map_0_share");
+      state.token = null;
+      localStorage.removeItem("Map_0_Share"); 
+    },
+    reset: (state) => {
+      state.isAuth = false;
+      state.user = {};
+      state.token = null;
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout,reset } = authSlice.actions;
 
 export default authSlice.reducer;

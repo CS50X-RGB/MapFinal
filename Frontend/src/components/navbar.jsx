@@ -19,10 +19,8 @@ export default function Navbar({ children }) {
     const fetchUserData = async () => {
       try {
         const response = await ProfileAxios();
-       console.log(response);
+       console.log(response,"Response in navbar");
         const userData = response?.data?.user;
-
-        dispatch(login(userData));
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {

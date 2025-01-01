@@ -119,7 +119,10 @@ export const getMyProfile = (req, res) => {
       });
     }
   } catch (error) {
-
+      return res.status(500).json({
+        success: false,
+        message: `Not logged in ${error}`,
+      });
   }
 }
 
