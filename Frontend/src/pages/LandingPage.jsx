@@ -1,6 +1,6 @@
 import "../index.css";
 import logo3 from "./assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Image, Button,User,Dropdown,DropdownItem,DropdownTrigger,DropdownMenu } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import car from "../assests/car.svg";
@@ -8,7 +8,8 @@ import petrolPump from "../assests/petrolpump.svg";
 import Accordian from "./Accordian.jsx";
 import Footer from "../components/Footer";
 import { useDispatch, useSelector } from "react-redux";
-import { reset } from "../cart/authSlice";
+import { logout } from "../cart/authSlice";
+import handleLogout from "../utils/Db/Logout";
 
 const Faqs = [
   {
@@ -43,13 +44,22 @@ const Faqs1 = [
 function LandingPage() {
   const {user} = useSelector((state) => state.auth);
     const dispatch = useDispatch(); 
- 
+   const navigate = useNavigate();
+ const logoutHandler = async () => {
+    try {
+      await handleLogout();
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="color font-poppins">
       <nav className="flex flex-row w-full justify-between">
         <Image src={logo3} width={100} height={100} />
         <div className="flex text-md md:text-2xl font-poppins font-bold items-center p-4 flex-row text-white gap-4">
-          {(Object.keys(user).length !== 0) ? 
+          {(user && Object.keys(user).length !== 0) ? 
              (
               <div className="flex flex-row items-center"> 
            <Dropdown>
@@ -77,7 +87,7 @@ function LandingPage() {
                   <DropdownItem key="profile">
                           <Link to={"/profile"}>Profile</Link>
                      </DropdownItem>
-                  <DropdownItem key="delete" className="text-danger" color="danger">
+                  <DropdownItem onClick={() => logoutHandler()} key="delete" className="text-danger" color="danger">
                     Logout
                   </DropdownItem>
              </DropdownMenu>
@@ -109,7 +119,7 @@ function LandingPage() {
           adventure of generosity and support.</p>
       </motion.div>
       <div className="flex p-[.4rem] md:p-[2rem] flex-row items-start ml-[8rem] md:ml-[10rem]">
-        <motion.button onClick={() => dispatch(reset())}
+        <motion.button onClick={() => navigate("/login")}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="px-[2rem] md:px-[4rem] rounded-xl justify-self-start py-[1rem] text-lg md:text-xl border-dotted border-4 border-sky-500 bg-gradient-to-r from-blue-400 to-pink-200

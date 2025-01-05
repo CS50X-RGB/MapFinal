@@ -2,9 +2,9 @@ import User from "../Models/user.js";
 import jwt from "jsonwebtoken";
 
 export const isAuth = async (req, res, next) => {
-      const { Maps_o_share_token } = req.cookies;
+      const Maps_o_share_token  = req.headers["authorization"].split(" ")[1];
       if (!Maps_o_share_token) {
-            return res.status(402).json({
+            return res.status(401).json({
                   sucess: false,
                   message: "Access denied Please Login",
             })

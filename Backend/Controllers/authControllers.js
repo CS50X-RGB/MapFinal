@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/features.js";
 import sendEmail from "../utils/sendMail.js";
 import generateRandomToken from "../utils/generateRandomToken.js";
-
+import redis from "../server.js";
 
 export const Register = async (req, res, next) => {
   try {
@@ -70,15 +70,21 @@ export const Login = async (req, res, next) => {
 }
 
 export const Logout = async (req, res) => {
-  res.clearCookie("Maps_o_share_token", {
-    secure: true,
-    sameSite: "strict",
-    path: "/",
-  })
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  if(user.active){
+      const update_user = await User.findByIdAndUpdate(_id, {active : false});
+       await redis.zrem('driverLocations', _id);
+      await redis.hdel('userData', _id);
+      await redis.hdel('profilePic', _id);
+ 
+  }else{
+  return res.status(200) 
     .json({
       success: true,
       user: req.user,
-    })
+    });
+   }
 };
 
 export const setAuthToken = async (req,res) => {
@@ -139,7 +145,7 @@ export const ForgotPassword = async (req, res) => {
     const re = await user.save();
     console.log(re);
     const resetLink = `https://map-final.vercel.app/resetPassword/${resetIdentifier}`;
-    console.log(resetLink);
+
     sendEmail(user.email, `Click the following link to reset your password : ${resetLink}`);
     return res.status(200).json({
       success: true,
@@ -181,7 +187,21 @@ export const ResetPassword = async (req, res) => {
     })
   }
 };
-
+export const getProfile = async (req,res) => {
+  try {
+    const {id} = req.params;
+    const user = await User.findById(id);
+    return res.status(200).json({
+        success : true,
+        user
+    });
+  } catch (error) {
+    return res.status(500).json({
+       success : false,
+       err : error
+   }); 
+  }
+}
 export const resetDetails = async (req, res) => {
   try {
     const { name, email, phone, profilePic, dLNo } = req.body;
@@ -328,4 +348,4 @@ export const UnSucessTrans = async (req, res) => {
   }
 };
 
-export default { Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans };
+export default {getProfile, Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans };

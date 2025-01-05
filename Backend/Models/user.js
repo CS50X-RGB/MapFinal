@@ -1,5 +1,6 @@
 import  mongoose  from "mongoose";
 
+
 const UserType = {
   RegularUser: "RegularUser",
   ResourcePoint: "ResourcePoint",
@@ -21,6 +22,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  active : {
+   type : Boolean,
+   default : false
   },
   phoneno: {
     type: String,

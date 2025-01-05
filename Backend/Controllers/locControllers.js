@@ -1,3 +1,4 @@
+import User from "../Models/user.js";
 import redis from "../server.js";
 
 export const UpdateLoc = async (req, res) => {
@@ -5,11 +6,26 @@ export const UpdateLoc = async (req, res) => {
         const { latitude, longitude } = req.body;
         await redis.geoadd('driverLocations', longitude, latitude, String(req.user._id));
         const name = req.user.name;
+        const id = req.user._id;
+        const user = await User.findByIdAndUpdate(id,
+          {
+             active : true
+          },
+          {
+            new : true
+          }
+        );
+        if(!user){
+            return res.status(404).json({
+              success : false,
+              message : "User update active not occuring"
+           });
+        }
         const phone = req.user.phoneno;
         const dlNo = req.user.dLNo;
         const profilePic = req.user.profilePic;
-        await redis.hset('userData', req.user._id, JSON.stringify({ name, phone, dlNo }));
-        await redis.hset('profilePic', req.user._id, profilePic);
+        await redis.hset('userData', id, JSON.stringify({ name, phone, dlNo }));
+        await redis.hset('profilePic', id, profilePic);
         res.json({
             success: true,
         });
@@ -77,7 +93,10 @@ export const getNearby = async (req, res) => {
             });
         }
 
-        res.json({ nearbyDrivers: filteredNearbyDriversWithInfo });
+        res.status(200).json({
+             success : true,
+             nearbyDrivers: filteredNearbyDriversWithInfo
+          });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -91,7 +110,10 @@ export const RemoveFromList = async (req, res) => {
       await redis.zrem('driverLocations', userId);
       await redis.hdel('userData', userId);
       await redis.hdel('profilePic', userId);
-      res.json({
+      //remove 
+      const user = await User.findByIdAndUpdate(req.user._id,{ active : false }, {new : true});
+      res.status(200).json({
+        message : "Updated Information", 
         success: true,
       });
     } catch (err) {

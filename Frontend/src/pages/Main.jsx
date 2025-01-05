@@ -491,12 +491,11 @@ function Main() {
                   {data?.map((driver) => (
                     <TableRow key={driver.userId}>
                       <TableCell>
-                        <User
+                        <Avatar
+                         isBordered
                          name={driver.name}
-                         avatarProps={{
-                             src : driver?.profilePic,
-                            size : "lg"
-                          }}
+                           src={driver?.profilePic}
+                           color={driver.active ? "success" : "danger"}
                           alt="ProfilePic" 
                           className="rounded-full text-xl"
                         />
