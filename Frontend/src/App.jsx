@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Main from "./pages/Main.jsx";
+import MainCopy from "./pages/MainCopy.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import "./index.css";
@@ -21,7 +22,7 @@ export default function App() {
         <>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/main" element={<Main />} />
+          <Route path="/main" element={<MainCopy />} />
           <Route path="/register" element={<Navigate to="/main" />} />
           <Route path="/login" element={<Navigate to="/main" />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

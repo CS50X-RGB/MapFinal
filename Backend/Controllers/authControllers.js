@@ -4,6 +4,7 @@ import { sendToken } from "../utils/features.js";
 import sendEmail from "../utils/sendMail.js";
 import generateRandomToken from "../utils/generateRandomToken.js";
 import redis from "../server.js";
+import TransactionModel from "../Models/transcation.js";
 
 export const Register = async (req, res, next) => {
   try {
@@ -72,41 +73,41 @@ export const Login = async (req, res, next) => {
 export const Logout = async (req, res) => {
   const { _id } = req.user;
   const user = await User.findById(_id);
-  if(user.active){
-      const update_user = await User.findByIdAndUpdate(_id, {active : false});
-       await redis.zrem('driverLocations', _id);
-      await redis.hdel('userData', _id);
-      await redis.hdel('profilePic', _id);
- 
-  }else{
-  return res.status(200) 
-    .json({
-      success: true,
-      user: req.user,
-    });
-   }
+  if (user.active) {
+    const update_user = await User.findByIdAndUpdate(_id, { active: false });
+    await redis.zrem('driverLocations', _id);
+    await redis.hdel('userData', _id);
+    await redis.hdel('profilePic', _id);
+
+  } else {
+    return res.status(200)
+      .json({
+        success: true,
+        user: req.user,
+      });
+  }
 };
 
-export const setAuthToken = async (req,res) => {
-  try{
+export const setAuthToken = async (req, res) => {
+  try {
     const { fcmToken } = req.body;
     const { id } = req.user;
     const user = await User.findByIdAndUpdate(id, {
-        fcmToken : fcmToken
-     });
-     if(!user){
-         return res.status(404).json({
-           message : "User Not Found"
-        })
+      fcmToken: fcmToken
+    });
+    if (!user) {
+      return res.status(404).json({
+        message: "User Not Found"
+      })
     }
     return res.status(200).json({
-       message : 'FCM Token Updated successfully',
-       user 
-     });
-  }catch(error){
+      message: 'FCM Token Updated successfully',
+      user
+    });
+  } catch (error) {
     return res.status(500).json({
-       message  : "Server Error"
-     })
+      message: "Server Error"
+    })
   }
 }
 
@@ -125,10 +126,10 @@ export const getMyProfile = (req, res) => {
       });
     }
   } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: `Not logged in ${error}`,
-      });
+    return res.status(500).json({
+      success: false,
+      message: `Not logged in ${error}`,
+    });
   }
 }
 
@@ -161,7 +162,6 @@ export const ForgotPassword = async (req, res) => {
 }
 
 export const ResetPassword = async (req, res) => {
-  console.log(req.params.resetIdentifier);
   try {
     const resetIdentifier = req.params.resetIdentifier;
     const { newpass } = req.body;
@@ -169,7 +169,6 @@ export const ResetPassword = async (req, res) => {
     const user = await User.findOne({
       resetIdentifier: resetIdentifier
     });
-    console.log(user);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -187,19 +186,19 @@ export const ResetPassword = async (req, res) => {
     })
   }
 };
-export const getProfile = async (req,res) => {
+export const getProfile = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const user = await User.findById(id);
     return res.status(200).json({
-        success : true,
-        user
+      success: true,
+      user
     });
   } catch (error) {
     return res.status(500).json({
-       success : false,
-       err : error
-   }); 
+      success: false,
+      err: error
+    });
   }
 }
 export const resetDetails = async (req, res) => {
@@ -251,93 +250,118 @@ export const resetDetails = async (req, res) => {
 };
 
 export const SucessTrans = async (req, res) => {
-  console.log(req.body);
-  console.log(req.user.userStars);
   try {
     const user = req.user;
     const { id } = req.body;
-    const anotherUser = await User.findOne({
-      _id: id,
-    })
-    if (!user) {
+
+    const me = await User.findById(user._id);
+    const anotherUser = await User.findById(id);
+
+    if (!me) {
       return res.status(401).json({
         success: false,
         message: "User is not authorized",
       });
     }
+
     if (!anotherUser) {
       return res.status(401).json({
         success: false,
-        message: "Another User is not authorized",
+        message: "Another user is not authorized",
       });
     }
-    if (user.userStars === 5) {
-      user.userStars = 5;
-      anotherUser.userStars = 5;
-    } else if (anotherUser.userStars === 5) {
-      anotherUser.userStars = 5;
-    } else {
-      user.userStars = (user.userStars + 0.5);
-      anotherUser.userStars = (anotherUser.userStars + 0.5);
-      await user.save();
+
+    const newTransaction = await TransactionModel.create({
+      orderedBy: me._id,
+      fullfilledBy: anotherUser._id,
+      status: "completed",
+    });
+
+    if (me.userStars < 5 && anotherUser.userStars) {
+      me.userStars = Math.min(5, me.userStars + 0.5);
+      anotherUser.userStars = Math.min(5, anotherUser.userStars + 0.5);
     }
-    res.status(200).json({
+
+    await me.save();
+    await anotherUser.save();
+
+    return res.status(200).json({
       success: true,
-      message: "User stats updated successfully",
+      message: "Transaction recorded and user stars updated",
       stars: {
-        my: user.userStars,
-        another: anotherUser.userStars
+        my: me.userStars,
+        another: anotherUser.userStars,
       },
+      transaction: newTransaction.toObject()
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to update user stats",
     });
   }
 };
+
 
 export const UnSucessTrans = async (req, res) => {
   try {
     const user = req.user;
     const { id } = req.body;
-    console.log(id);
-    const anotherUser = await User.findOne({
-      _id: id,
-    })
-    if (!user) {
+
+    const me = await User.findById(user._id);
+    const anotherUser = await User.findById(id);
+
+    if (!me) {
       return res.status(401).json({
         success: false,
         message: "User is not authorized",
       });
     }
+
     if (!anotherUser) {
       return res.status(401).json({
         success: false,
         message: "Another User is not authorized",
       });
     }
-    anotherUser.userStars = (anotherUser.userStars + 0.75);
-    user.userStars = user.userStars - 0.5;
-    if (user.userStars === 0) {
+
+    const transaction = await TransactionModel.create({
+      orderedBy: me._id,
+      fullfilledBy: anotherUser._id,
+      status: "cancelled", // consistent lowercase
+    });
+
+    // Star adjustment
+    anotherUser.userStars = Math.min(5, anotherUser.userStars + 0.5);
+    me.userStars = Math.max(0, me.userStars - 0.5);
+
+
+    if (me.userStars <= 0) {
+      me.userStars = 0; // ensure it's not negative
+      await me.save();
+      await anotherUser.save();
       return res.status(403).json({
-        message: "U can be sussespended from our platform",
+        success: false,
+        message: "You may be suspended from our platform",
         stars: {
-          my: user.userStars,
-          anotherUser: anotherUser.user,
-        }
+          my: me.userStars,
+          anotherUser: anotherUser.userStars,
+        },
       });
     }
-    await user.save();
 
-    res.status(200).json({
+    await me.save();
+    await anotherUser.save();
+
+    return res.status(200).json({
       success: true,
-      message: "User stats updated successfully",
+      message: "Transaction recorded and user stars updated",
       stars: {
-        my: user.userStars,
-        anotherUser: anotherUser.user
-      }
+        my: me.userStars,
+        anotherUser: anotherUser.userStars,
+      },
+      transaction : transaction.toObject()
     });
   } catch (e) {
     console.error(e);
@@ -348,4 +372,5 @@ export const UnSucessTrans = async (req, res) => {
   }
 };
 
-export default {getProfile, Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans };
+
+export default { getProfile, Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans };

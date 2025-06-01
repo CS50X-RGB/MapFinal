@@ -15,6 +15,7 @@ export const UpdateLoc = async (req, res) => {
             new : true
           }
         );
+ 
         if(!user){
             return res.status(404).json({
               success : false,
@@ -29,7 +30,6 @@ export const UpdateLoc = async (req, res) => {
         res.json({
             success: true,
         });
-        console.log(true);
     } catch (err) {
         console.error(err);
         res.status(500).json({
@@ -40,14 +40,29 @@ export const UpdateLoc = async (req, res) => {
 };
 
 
+
 export const getNearby = async (req, res) => {
     try {
         const { r } = req.params;
-        const userId = String(req.user._id);
+        const userId = String(req.user?._id); // Safely retrieve user ID
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user ID.",
+            });
+        }
+
         const userLoc = await redis.geopos('driverLocations', userId);
+        // Check if userLoc exists and contains valid coordinates
+        if (!userLoc || !userLoc[0]) {
+            return res.status(404).json({
+                success: false,
+                message: "User location not found in driverLocations.",
+            });
+        }
 
         const [lon, lat] = userLoc[0];
- 
 
         const nearbyDrivers = await redis.georadius(
             'driverLocations',
@@ -56,54 +71,67 @@ export const getNearby = async (req, res) => {
             parseFloat(r),
             'km',
             'WITHDIST'
-        );
+        ); 
+        // Check if there are nearby drivers
+        if (!nearbyDrivers || nearbyDrivers.length === 0) {
+            return res.status(404).json({
+                success: true,
+                message: "No nearby drivers found.",
+            });
+        }
 
         const nearbyDriversWithInfo = await Promise.all(
             nearbyDrivers.map(async (driver) => {
-                const userId = driver[0];
-                if (userId === req.params.userId) {
+                const driverId = driver[0];
+                // Skip if the driver is the requesting user
+                if (driverId === req.params.userId || driverId === userId) {
                     return null;
                 }
-                if(userId === req.user._id){
-                   return null;
-                }
-                const [driverLon, driverLat] = await redis.geopos('driverLocations', userId);
-                const userData = await redis.hget('userData', userId);
-                const { name, phone, dlNo } = JSON.parse(userData);
-                const profilePic = await redis.hget('profilePic', userId);
-                const distance = driver[1];
 
+                const [driverLon, driverLat] = await redis.geopos('driverLocations', driverId);
+
+                /*if (!driverLon || !driverLat) {
+                    return null; // Skip if driver location is invalid
+                }
+*/
+
+                const userData = await redis.hget('userData', driverId);
+                // console.log(userData,"userId");
+                const { name, phone, dlNo } = JSON.parse(userData);
+                const profilePic = await redis.hget('profilePic', driverId);
+                const distance = driver[1];
                 return {
-                    userId,
+                    userId: driverId,
                     name,
                     phone,
                     dlNo,
-                    latitude: driverLat,
-                    longitude: driverLon,
+                    latitude: driverLon[1],
+                    longitude: driverLon[0],
                     distance,
-                    profilePic
+                    profilePic,
                 };
             })
         );
-
+      //  console.log(nearbyDriversWithInfo,"Nearby");
+        // Filter out null results
         const filteredNearbyDriversWithInfo = nearbyDriversWithInfo.filter(driver => driver !== null);
+
         if (filteredNearbyDriversWithInfo.length === 0) {
-            res.json({
-                message: "No drivers found",
+            return res.status(400).json({
+                success: true,
+                message: "No drivers found with complete information.",
             });
         }
 
         res.status(200).json({
-             success : true,
-             nearbyDrivers: filteredNearbyDriversWithInfo
-          });
+            success: true,
+            nearbyDrivers: filteredNearbyDriversWithInfo,
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
-;
-
+};
 export const RemoveFromList = async (req, res) => {
     try {
       const userId = String(req.user._id);

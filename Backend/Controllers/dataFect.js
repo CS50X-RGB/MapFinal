@@ -3,78 +3,103 @@ import axios from "axios";
 import cron from "node-cron";
 
 let lastUpdateTime = null;
-let petrolPrices = [];
-let dieselPrices = [];
+
+
+
+let stateWisePrices = [];
 
 const updatePetrolPrices = async () => {
+  const petrolData = [];
   try {
-    const response = await axios.get("https://www.ndtv.com/fuel-prices/petrol-price-in-all-state", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    });
-    const html = response.data;
-    const $ = cheerio.load(html);
+    const response = await axios.get("https://www.ndtv.com/fuel-prices/petrol-price-in-all-state");
+    const $ = cheerio.load(response.data);
 
-    petrolPrices = [];
-
-    $(".font-16.color-blue.short-nm tbody tr").each((index, element) => {
-      const state = $(element).find("td:first-child a").text().trim();
-      const price = $(element).find("td:nth-child(2)").text().trim();
-      petrolPrices.push({ state, price });
+    $(".font-16.color-blue.short-nm tbody tr").each((_, el) => {
+      const state = $(el).find("td:first-child a").text().trim();
+      const price = $(el).find("td:nth-child(2)").text().trim();
+      if (state && price) {
+        petrolData.push({ state, petrol: price });
+      }
     });
-    petrolPrices.shift();
-    lastUpdateTime = new Date();
-    console.log("Petrol prices updated successfully:", lastUpdateTime);
-  } catch (error) {
-    console.log("Error updating petrol prices:", error.message);
+    petrolData.shift(); // remove table header
+    return petrolData;
+  } catch (e) {
+    console.error("Failed to fetch petrol prices:", e.message);
+    return [];
   }
 };
 
 const updateDieselPrices = async () => {
+  const dieselData = [];
   try {
-    const response = await axios.get("https://www.ndtv.com/fuel-prices/diesel-price-in-all-state", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    });
-    const html = await response.data;
-    const $ = cheerio.load(html);
+    const response = await axios.get("https://www.ndtv.com/fuel-prices/diesel-price-in-all-state");
+    const $ = cheerio.load(response.data);
 
-    dieselPrices = [];
-
-    $(".font-16.color-blue.short-nm tbody tr").each((index, element) => {
-      const state = $(element).find("td:first-child a").text().trim();
-      const price = $(element).find("td:nth-child(2)").text().trim();
-      dieselPrices.push({ state, price });
+    $(".font-16.color-blue.short-nm tbody tr").each((_, el) => {
+      const state = $(el).find("td:first-child a").text().trim();
+      const price = $(el).find("td:nth-child(2)").text().trim();
+      if (state && price) {
+        dieselData.push({ state, diesel: price });
+      }
     });
-    dieselPrices.shift();
-    lastUpdateTime = new Date();
-    console.log("Diesel prices updated successfully:", lastUpdateTime);
-  } catch (err) {
-    console.log(err);
+    dieselData.shift(); // remove table header
+    return dieselData;
+  } catch (e) {
+    console.error("Failed to fetch diesel prices:", e.message);
+    return [];
   }
 };
+
+const updateStateWisePrices = async () => {
+  const petrolList = await updatePetrolPrices();
+  const dieselList = await updateDieselPrices();
+
+  const priceMap = new Map();
+
+  petrolList.forEach(({ state, petrol }) => {
+    priceMap.set(state, { state, petrol });
+  });
+
+  dieselList.forEach(({ state, diesel }) => {
+    if (priceMap.has(state)) {
+      priceMap.get(state).diesel = diesel;
+    } else {
+      priceMap.set(state, { state, diesel });
+    }
+  });
+
+  stateWisePrices = Array.from(priceMap.values());
+  lastUpdateTime = new Date();
+  console.log(`✅ Fuel prices updated @ ${lastUpdateTime.toISOString()}`);
+};
+
 
 cron.schedule("0 0 * * *", () => {
-  updatePetrolPrices();
-  updateDieselPrices();
+  updateStateWisePrices();
 });
-
 export const getFuelPrices = async (req, res) => {
-  const shouldUpdate = !lastUpdateTime || (new Date() - lastUpdateTime) > 24 * 60 * 60 * 1000;
+  const shouldUpdate =
+    !lastUpdateTime || new Date() - lastUpdateTime > 24 * 60 * 60 * 1000;
 
   if (shouldUpdate) {
-    await updatePetrolPrices();
-    await updateDieselPrices();
+    await updateStateWisePrices();
   }
 
+  const page = parseInt(req.params.page) || 1;
+  const limit = parseInt(req.params.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const paginatedData = stateWisePrices.slice(startIndex, endIndex);
+
   res.status(200).json({
-    petrolPrices,
-    dieselPrices,
+    success: true,
+    page,
+    totalStates: stateWisePrices.length,
+    totalPages: Math.ceil(stateWisePrices.length / limit),
+    fuelPrices: paginatedData,
   });
 };
+
 
 export default { getFuelPrices };

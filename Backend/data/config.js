@@ -1,0 +1,1 @@
+export const AWS_NOTIFCATION_SERVER = process.env.AWS_NOTIFCATION_SERVER;

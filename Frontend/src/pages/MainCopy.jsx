@@ -44,7 +44,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import sendFirebaseToken, {
   requestPermission,
 } from "../utils/Notifications.js";
-
+import { toast } from "sonner";
 // initializePusher();
 
 const plotGJSON = (points) => {
@@ -83,7 +83,7 @@ const plotGJSONPoints = (points) => {
   return geoJSONPoints;
 };
 
-function Main() {
+function MainCopy() {
   const [data, setData] = useState(null);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [err, setError] = useState(null);
@@ -105,6 +105,7 @@ function Main() {
     isOpen: isOpenNeigh,
     onOpen: onOpenNeigh,
     onOpenChange: onOpenChangeNeigh,
+    onClose: onCloseNeigh,
   } = useDisclosure();
   const [neighDriver, setneighDriver] = useState(null);
   const [theme, setTheme] = useState("streets-v2");
@@ -175,6 +176,7 @@ function Main() {
       };
     }
   }, [newMap]);
+  const [selectedDriver, setSelectedDriver] = useState([]);
   const notifySingle = useMutation({
     mutationKey: ["notifySingle"],
     mutationFn: (userVar) => {
@@ -186,30 +188,50 @@ function Main() {
       return postData(notifyRoutes.singleNotify, {}, body);
     },
   });
-  const notifyAllControlPostive = useMutation({
-    mutationKey: ["notifyAllControlPostive"],
-    mutationFn: (data) => {
-      console.log(data);
-      const userId = data.map((item) => item.userId);
+  const notifySingleCancel = useMutation({
+    mutationKey: ["notifySingleCancel"],
+    mutationFn: (driver) => {
       const body = {
-        userId,
-        message: `${user.name} wants help for more details you can call on ${user.phone} 
-              the consumer is ${data.distance} Km away from your current location`,
+        userId: driver.userId,
+        message: `${user.name} has cancelled the help you can contact on ${user.phone} for refund`,
       };
-      return postData(notifyRoutes.allNotify, {}, body);
+      return postData(notifyRoutes.singleNotify, {}, body);
     },
   });
-  const notiftAllControlNegative = useMutation({
-    mutationKey: ["notifyAllControlNegative"],
-    mutationFn: (userId) => {
+  const notifySingleConfirm = useMutation({
+    mutationKey: ["notifySingleCancel"],
+    mutationFn: (selectedDriver) => {
       const body = {
-        userId,
-        message: `${user.name} will be penalized`,
+        userId: selectedDriver._id,
+        message: `Congrats ${user.name} your deal has been sucessfull with ${selectedDriver.name}!`,
       };
-      return postData(notifyRoutes.allNotify, {}, body);
+      return postData(notifyRoutes.singleNotify, {}, body);
     },
   });
-  const antiDriver = useMutation({
+  //   const notifyAllControlPostive = useMutation({
+  //     mutationKey: ["notifyAllControlPostive"],
+  //     mutationFn: (data) => {
+  //       console.log(data);
+  //       const userId = data.map((item) => item.userId);
+  //       const body = {
+  //         userId,
+  //         message: `${user.name} wants help for more details you can call on ${user.phone}
+  //               the consumer is ${data.distance} Km away from your current location`,
+  //       };
+  //       return postData(notifyRoutes.allNotify, {}, body);
+  //     },
+  //   });
+  //   const notiftAllControlNegative = useMutation({
+  //     mutationKey: ["notifyAllControlNegative"],
+  //     mutationFn: (userId) => {
+  //       const body = {
+  //         userId,
+  //         message: `${user.name} will be penalized`,
+  //       };
+  //       return postData(notifyRoutes.allNotify, {}, body);
+  //     },
+  //   });
+  const removeDriver = useMutation({
     mutationKey: ["antiDriver"],
     mutationFn: () => {
       return deleteData(locationRoutes.deleteLoc, {}, {});
@@ -220,9 +242,10 @@ function Main() {
     mutationFn: () => {
       return postData(locationRoutes.updateLoc, {}, location);
     },
+    enabled: !!neigh,
   });
   const tokenSender = async () => {
-   // await sendFirebaseToken();
+    // await sendFirebaseToken();
     driMode.mutate();
     setDriverMode(true);
   };
@@ -235,29 +258,29 @@ function Main() {
     queryFn: () => {
       return getData(`/location/nearby/${r}`, {});
     },
-    enabled: !!driverMode,
+    enabled: !!neigh,
   });
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      try {
-        if (driverMode) {
-          const res = driMode.mutate();
-          console.log(res);
-        }
-      } catch (error) {
-        console.error("Error in interval:", error);
-      }
-    }, 60000);
-    return () => clearInterval(intervalId);
-  }, [driverMode]);
+  //   useEffect(() => {
+  //     const intervalId = setInterval(async () => {
+  //       try {
+  //         if (driverMode) {
+  //           const res = driMode.mutate();
+  //           console.log(res);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error in interval:", error);
+  //       }
+  //     }, 60000);
+  //     return () => clearInterval(intervalId);
+  //   }, [driverMode]);
 
-  useEffect(() => {
-    if (notifyAll && driverMode && neigh) {
-      notifyAllControlPostive.mutate(data);
-    } else if (!notifyAll && driverMode && neigh) {
-      notiftAllControlNegative.mutate(data);
-    }
-  }, [notifyAll, data]);
+  //   useEffect(() => {
+  //     if (notifyAll && driverMode && neigh) {
+  //       notifyAllControlPostive.mutate(data);
+  //     } else if (!notifyAll && driverMode && neigh) {
+  //       notiftAllControlNegative.mutate(data);
+  //     }
+  //   }, [notifyAll, data]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -265,13 +288,10 @@ function Main() {
         if (neigh && driverMode) {
           const res = getNeighbours;
           console.log(res, "Result");
-          onOpenNeigh();
           if (isFetchedNeigh && res.data) {
             const filteredNearbyDrivers = res.data.nearbyDrivers.filter(
               (driver) => Math.abs(driver.distance) > 0.001
             );
-            setData(filteredNearbyDrivers);
-            setneighDriver(plotGJSONPoints(filteredNearbyDrivers));
             setData(filteredNearbyDrivers);
             setneighDriver(plotGJSONPoints(filteredNearbyDrivers));
           }
@@ -284,18 +304,18 @@ function Main() {
     fetchData();
   }, [neigh, driverMode]);
 
-  useEffect(() => {
-    const storedDriverMode = localStorage.getItem("driverMode");
-    const storedNeigh = localStorage.getItem("neigh");
-    const parsedDriverMode = storedDriverMode === "true";
-    const parsedNeigh = storedNeigh === "true";
-    setDriverMode(parsedDriverMode);
-    setNeigh(parsedNeigh);
-    return () => {
-      localStorage.setItem("driverMode", driverMode.toString());
-      localStorage.setItem("neigh", neigh.toString());
-    };
-  }, []);
+  //   useEffect(() => {
+  //     const storedDriverMode = localStorage.getItem("driverMode");
+  //     const storedNeigh = localStorage.getItem("neigh");
+  //     const parsedDriverMode = storedDriverMode === "true";
+  //     const parsedNeigh = storedNeigh === "true";
+  //     setDriverMode(parsedDriverMode);
+  //     setNeigh(parsedNeigh);
+  //     return () => {
+  //       localStorage.setItem("driverMode", driverMode.toString());
+  //       localStorage.setItem("neigh", neigh.toString());
+  //     };
+  //   }, []);
 
   const cancelTrans = useMutation({
     mutationKey: ["cancelTrans"],
@@ -306,11 +326,15 @@ function Main() {
       };
       return putData("/users/UnsucessTrans", {}, body);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
+      const selectedDriver = data.find((driver) => driver.userId === id);
       setId(null);
+      notifySingleCancel.mutate(selectedDriver);
+      setSelectedDriver([]);
       setnotifyAll(false);
       setNeigh(false);
       setDriverMode(false);
+      onCloseNeigh();
     },
     onError: (error) => {
       console.error(error);
@@ -327,9 +351,13 @@ function Main() {
       return putData("/users/sucessTrans", {}, body);
     },
     onSuccess: (data) => {
+      const selectedDriver = data.find((driver) => driver.userId === id);
       setId(null);
       setnotifyAll(false);
       setNeigh(false);
+      setSelectedDriver([]);
+      onCloseNeigh();
+      notifySingleConfirm.mutate(selectedDriver);
       setDriverMode(false);
     },
     onError: (error) => {
@@ -339,24 +367,40 @@ function Main() {
   const [message, setMessage] = useState("");
 
   useNotify(user._id, setMessage);
-  const handleSuccess = async () => {
-    await successTrans.mutate(id);
-  };
-  const Failure = async () => {
-    await cancelTrans.mutate(id);
-  };
-  useEffect(() => {
-    if (id && cancel && driverMode && neigh) {
-      Failure();
-    }
-  }, [id, cancel, neigh, driverMode]);
 
+  // for every 5 minutes send updateLoc Request if only if driverMode is turned on
   useEffect(() => {
-    if (id && succ && driverMode && neigh) {
-      handleSuccess();
-    }
-  }, [id, succ, neigh, driverMode]);
+    let intervalId;
 
+    if (driverMode) {
+      intervalId = setInterval(() => {
+        driMode.mutate();
+      }, 300000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [driverMode]);
+
+  //   const handleSuccess = async () => {
+  //     await successTrans.mutate(id);
+  //   };
+  //   const Failure = async () => {
+  //     await cancelTrans.mutate(id);
+  //   };
+  //   useEffect(() => {
+  //     if (id && cancel && driverMode && neigh) {
+  //       Failure();
+  //     }
+  //   }, [id, cancel, neigh, driverMode]);
+
+  //   useEffect(() => {
+  //     if (id && succ && driverMode && neigh) {
+  //       handleSuccess();
+  //     }
+  //   }, [id, succ, neigh, driverMode]);
+  console.log(neigh, "Neigh mode");
   if (!location.latitude || !location.longitude) {
     return (
       <div className="flex bg-background flex-col justify-center items-center h-[100vh]">
@@ -435,6 +479,7 @@ function Main() {
                   className="bg-back text-text px-6 py-3"
                   onPress={() => {
                     setDriverMode(!driverMode);
+                    removeDriver.mutate();
                   }}
                 >
                   {user?.userType === "RegularUser"
@@ -445,7 +490,11 @@ function Main() {
                   <>
                     <Button
                       className="bg-back text-text px-6 py-3"
-                      onClick={() => setNeigh(!neigh)}
+                      onClick={() => {
+                        onOpenNeigh();
+
+                        setNeigh(!neigh);
+                      }}
                     >
                       {user?.userType === "RegularUser"
                         ? "See Near By Users"
@@ -457,7 +506,7 @@ function Main() {
                     <Button
                       className="bg-back text-text px-6 py-3"
                       onClick={() => {
-                        antiDriver.mutate();
+                        removeDriver.mutate();
                         setNeigh(!neigh);
                       }}
                     >
@@ -470,7 +519,9 @@ function Main() {
               <Button
                 className="bg-back text-text px-6 py-3"
                 onClick={() => {
-                  tokenSender();
+                  //tokenSender();
+                  //removeDriver.mutate();
+                  driMode.mutate();
                   setDriverMode(!driverMode);
                 }}
               >
@@ -483,6 +534,7 @@ function Main() {
             className="bg-back w-full h-full flex justify-center"
             isOpen={isOpenNeigh}
             onOpenChange={onOpenChangeNeigh}
+            onClose={() => setNeigh(!neigh)}
           >
             <ModalContent>
               {(onClose) => (
@@ -492,7 +544,7 @@ function Main() {
                   </ModalHeader>
                   {isFetchedNeigh ? (
                     <div className="font-mono text-text bg-back z-4">
-                      {!notifyAll && (
+                      {/* {!notifyAll && (
                         <Button
                           className="bg-text text-back px-4 py-2 rounded-xl m-2"
                           onClick={() => {
@@ -512,7 +564,7 @@ function Main() {
                             Interupt the process
                           </Button>
                         </>
-                      )}
+                      )} */}
                       <ModalBody>
                         <Table
                           removeWrapper
@@ -555,38 +607,29 @@ function Main() {
                                     {driver.dlNo}
                                   </TableCell>
                                   <TableCell>
-                                    <Button
-                                      onClick={() => {
-                                        notifySingle.mutate(driver);
-                                      }}
-                                      className="bg-text text-back shadow-xl"
-                                    >
-                                      Notfiy User{" "}
-                                    </Button>
-                                    {notifyAll && (
+                                    {!selectedDriver.includes(driver._id) && (
+                                      <Button
+                                        onClick={() => {
+                                          setSelectedDriver((prev) => [
+                                            ...prev,
+                                            driver._id,
+                                          ]);
+                                          notifySingle.mutate(driver);
+                                        }}
+                                        className="bg-text text-back shadow-xl"
+                                      >
+                                        Notfiy User{" "}
+                                      </Button>
+                                    )}
+                                    {selectedDriver.includes(driver._id) && (
                                       <>
-                                        <Button
-                                          className="bg-text text-text"
-                                          onClick={() => {
-                                            setSucc(true);
-                                            setId(driver.userId);
-                                            successTrans(driver.userId);
-                                          }}
-                                        >
-                                          Deal Done{" "}
-                                          <FaRegFaceSmileWink
-                                            className="fill-back hover:fill-text"
-                                            size={23}
-                                          />
-                                        </Button>
-
-                                        <div className="flex flex-row">
+                                        <div className="flex flex-col md:flex-row">
                                           <Button
                                             className="bg-text text-back flex flex-row m-1 hover:bg-back rounded-xl px-2 py-4 hover:text-text"
                                             onClick={() => {
                                               setCancel(true);
                                               setId(driver.userId);
-                                              cancelTrans(driver.userId);
+                                              cancelTrans.mutate(driver.userId);
                                             }}
                                           >
                                             Cancel Order ?
@@ -600,7 +643,9 @@ function Main() {
                                             onClick={() => {
                                               setSucc(true);
                                               setId(driver.userId);
-                                              successTrans(driver.userId);
+                                              successTrans.mutate(
+                                                driver.userId
+                                              );
                                             }}
                                           >
                                             Deal Done{" "}
@@ -657,4 +702,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default MainCopy;

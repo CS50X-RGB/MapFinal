@@ -9,6 +9,7 @@ import NotificationRouter from "./Router/notify.js";
 import DataRouter from "./Router/dataPriceFetcher.js";
 import cors from 'cors';
 import bodyParser from "body-parser";
+import redis from "./utils/redis.js";
 import Redis from 'ioredis';
 const app = express();
 
@@ -38,7 +39,7 @@ app.use("/api/v1/data", DataRouter);
 config({
   path: "./data/config.env",
 });
-
+/*
 const redis = new Redis(process.env.REDIS_DB);
 
 
@@ -47,12 +48,13 @@ redis.on('connect', () => {
   console.log("Connected to Redis Cloud..");
 });
 
+
 redis.on('error', (err) => {
   console.error("Error connecting to Redis:", err);
 });
 
 
-
+*/
 app.listen(3005, () => {
   console.log("Listening to 3005");
 });
