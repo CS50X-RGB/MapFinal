@@ -361,7 +361,7 @@ export const UnSucessTrans = async (req, res) => {
         my: me.userStars,
         anotherUser: anotherUser.userStars,
       },
-      transaction : transaction.toObject()
+      transaction: transaction.toObject()
     });
   } catch (e) {
     console.error(e);
@@ -373,4 +373,144 @@ export const UnSucessTrans = async (req, res) => {
 };
 
 
-export default { getProfile, Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans };
+
+export const getTransactions = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+
+    const successfulTransactions = await TransactionModel.find({
+      status: "completed",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy").populate("fullfilledBy");
+
+    const cancelledTransactions = await TransactionModel.find({
+      status: "cancelled",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy").populate("fullfilledBy");
+
+    const total_transactions = successfulTransactions.length + cancelledTransactions.length;
+
+    return res.status(200).json({
+      success: successfulTransactions,
+      cancelled: cancelledTransactions,
+      success_len: successfulTransactions.length,
+      cancel_len: cancelledTransactions.length,
+      total: total_transactions
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "Failed to fetch transactions",
+      error: error.message
+    });
+  }
+};
+
+export const getTransactionsCancel = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const offset = req.params.offset;
+    const page = req.params.page;
+    const skip = (page - 1) * offset;
+    const cancelledTransactions = await TransactionModel.find({
+      status: "cancelled",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy")
+      .populate("fullfilledBy")
+      .skip(skip)
+      .limit(offset);
+      const total = await TransactionModel.find({
+      status: "cancelled",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy")
+      .populate("fullfilledBy").countDocuments();
+    return res.status(200).json({
+      cancelled: cancelledTransactions,
+      cancel_len: cancelledTransactions.length,
+      total,
+      pages : Math.ceil(total/offset)
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "Failed to fetch transactions",
+      error: error.message
+    });
+  }
+};
+
+export const getTransactionsSuccess = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const page = req.params.page;
+    const offset = req.params.offset;
+    const skip = (page - 1) * offset;
+    const successfulTransactions = await TransactionModel.find({
+      status: "completed",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy")
+      .populate("fullfilledBy")
+      .skip(skip)
+      .limit(offset);
+
+    const total_transactions = await TransactionModel.find({
+      status: "completed",
+      $or: [
+        {
+          orderedBy: user_id,
+        },
+        {
+          fullfilledBy: user_id
+        }
+      ]
+    }).populate("orderedBy")
+      .populate("fullfilledBy").countDocuments();
+
+    return res.status(200).json({
+      success: successfulTransactions,
+      success_len: successfulTransactions.length,
+      total: total_transactions,
+      pages: Math.ceil(total_transactions / offset)
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "Failed to fetch transactions",
+      error: error.message
+    });
+  }
+};
+
+export default { getProfile, Login, Register, Logout, getMyProfile, ForgotPassword, ResetPassword, resetDetails, SucessTrans, UnSucessTrans, getTransactions, getTransactionsCancel, getTransactionsSuccess };

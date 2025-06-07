@@ -1,5 +1,5 @@
 import express from 'express';
-import { Login, Register,Logout,getProfile, getMyProfile ,ForgotPassword, ResetPassword,setAuthToken, resetDetails ,SucessTrans,UnSucessTrans} from '../Controllers/authControllers.js';
+import { Login, Register,Logout,getProfile,getTransactions, getMyProfile ,ForgotPassword, ResetPassword,setAuthToken, resetDetails ,SucessTrans,UnSucessTrans,getTransactionsCancel,getTransactionsSuccess} from '../Controllers/authControllers.js';
 import { isAuth } from '../middleWares/isAuth.js';
 import validateUserData from '../middleWares/userSchmeaValid.js';
 const router = express.Router();
@@ -15,4 +15,7 @@ router.post('/resetpassword/:resetIdentifier', ResetPassword);
 router.put('/resetDetails',isAuth,resetDetails);
 router.put('/sucessTrans',isAuth,SucessTrans);
 router.put('/UnsucessTrans',isAuth,UnSucessTrans);
+router.get("/my/transaction",isAuth,getTransactions);
+router.get("/my/transaction/cancel/:page/:offset",isAuth,getTransactionsCancel);
+router.get("/my/transaction/success/:page/:offset",isAuth,getTransactionsSuccess);
 export default router;

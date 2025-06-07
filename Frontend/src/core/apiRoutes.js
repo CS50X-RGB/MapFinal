@@ -1,5 +1,8 @@
 export const authRoutes = {
-  myprofile : "/users/getMyProfile", 
+  myprofile : "/users/getMyProfile",
+  myTransactions : "users/my/transaction", 
+  successTransaction : "users/my/transaction/success",
+  cancelTransaction : "users/my/transaction/cancel",
   sendToken : "/users/add-token"
 };
 export const notifyRoutes = {
