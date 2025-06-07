@@ -73,7 +73,7 @@ export default function ProfileCard() {
       },
     });
 
-  if (isFetching) {
+  if (isFetching || isFetchingCancel || isFetchingSuccess) {
     return <SkeletonCard />;
   }
   console.log(getTransactionsSuccess.data.success);
@@ -146,7 +146,7 @@ export default function ProfileCard() {
               </div>
             }
           >
-            <div>
+            <div className="flex flex-col gap-4 items-center">
               <div className="grid grid-rows-2 grid-cols-2 gap-4 p-4">
                 {getTransactionsCancel.data.cancelled.map((t, index) => {
                   return <TransactionCard t={t} key={index} />;

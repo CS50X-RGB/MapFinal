@@ -1,4 +1,6 @@
 import { Card, CardBody, User, Chip } from "@nextui-org/react";
+import { CheckIcon } from "../Icons/CheckIcon";
+import CrossIcon from "../Icons/CrossIcon";
 
 export default function TransactionCard({ t }) {
   const getStatusColor = (status) => {
@@ -43,7 +45,9 @@ export default function TransactionCard({ t }) {
             }}
           />
         </div>
-        <Chip>{t.status.toUpperCase()}</Chip>
+        <Chip startContent={
+          t.status.toUpperCase() === "COMPLETED" ? <CheckIcon/> : <CrossIcon className={"fill-white"}/>
+        } className={t.status.toUpperCase() === "COMPLETED" ?  "bg-green-500 text-white" : "bg-red-500 text-white"}>{t.status.toUpperCase()}</Chip>
       </CardBody>
     </Card>
   );

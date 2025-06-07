@@ -5,7 +5,7 @@ import handleLogout from "../utils/Db/Logout";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, logout } from "../cart/authSlice";
-import { Card, CardBody,Avatar, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Card, CardBody,Avatar, Image, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure,Link } from "@nextui-org/react";
 import { Spinner } from "@nextui-org/react";
 
 export default function Navbar({ children }) {
@@ -53,7 +53,7 @@ export default function Navbar({ children }) {
         <Card className="flex bg-black flex-end font-mono items-center">
           <CardBody className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-around">
             <div className="flex flex-row items-center gap-4 justify-around w-full md:w-fit">
-              <p className="text-xl text-text">Welcome {user?.name}</p>
+              <Link href="/profile" className="text-xl text-text">Welcome {user?.name}</Link>
               <Avatar
                 radius="full"
                 size="lg" 
