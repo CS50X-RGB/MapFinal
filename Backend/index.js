@@ -1,5 +1,9 @@
 import express from "express";
 import { config } from "dotenv";
+
+// ✅ Load .env first
+config({ path: "./.env" });
+
 import connectDB from "./data/database.js";
 import cookieParser from "cookie-parser";
 import UserRouter from "./Router/auth.js";
@@ -10,7 +14,6 @@ import DataRouter from "./Router/dataPriceFetcher.js";
 import cors from 'cors';
 import bodyParser from "body-parser";
 import redis from "./utils/redis.js";
-import Redis from 'ioredis';
 const app = express();
 
 
@@ -26,8 +29,7 @@ app.use(
 
 app.use(cookieParser());
 app.use(bodyParser.json({ extended: true, parameterLimit: 100, limit: "40mb" }));
-
-
+ 
 app.use(express.json({ limit: '50mb' }));
 app.use(morgan());
 app.use("/api/v1/users", UserRouter);
@@ -36,9 +38,7 @@ app.use("/api/v1/notify", NotificationRouter);
 app.use("/api/v1/data", DataRouter);
 
 
-config({
-  path: "./data/config.env",
-});
+
 /*
 const redis = new Redis(process.env.REDIS_DB);
 

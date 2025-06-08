@@ -1,11 +1,14 @@
 import Redis from 'ioredis';
+import { config } from "dotenv";
+
+config({ path: ".env" });
 
 let redis;
 
 if (!redis) {
   redis = new Redis(process.env.REDIS_DB, {
-        tls : {},
- //  maxRetriesPerRequest: 3, // Optional but helpful
+    tls: {},
+    //  maxRetriesPerRequest: 3, // Optional but helpful
     reconnectOnError: (err) => {
       console.error("Redis reconnect error:", err);
       return true;

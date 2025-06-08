@@ -1,5 +1,8 @@
 import axios from "axios";
-import { AWS_NOTIFCATION_SERVER } from "../data/config.js";
+import { config } from "dotenv";
+
+// ✅ Load .env first
+config({ path: "./.env" });
 
 export default async function sendNotificationSendAll(userId, message) {
     try {
@@ -8,7 +11,7 @@ export default async function sendNotificationSendAll(userId, message) {
             message
         };
 
-        const response = await axios.post(`${AWS_NOTIFCATION_SERVER}/publish`, sendObj);
+        const response = await axios.post(`${process.env.AWS_NOTIFCATION_SERVER}/publish`, sendObj);
 
         console.log("Notification sent:", response.data);
         console.log("Status Code:", response.status);

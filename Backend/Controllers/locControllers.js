@@ -1,5 +1,5 @@
 import User from "../Models/user.js";
-import redis from "../server.js";
+import redis from "../index.js";
 
 export const UpdateLoc = async (req, res) => {
     try {

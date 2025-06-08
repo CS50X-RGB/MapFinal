@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/features.js";
 import sendEmail from "../utils/sendMail.js";
 import generateRandomToken from "../utils/generateRandomToken.js";
-import redis from "../server.js";
+import redis from "../index.js";
 import TransactionModel from "../Models/transcation.js";
 
 export const Register = async (req, res, next) => {
