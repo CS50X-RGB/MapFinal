@@ -4,5 +4,5 @@ import { sendNotification,sendNotificationAll } from '../Controllers/notifyContr
 const router = new express.Router();
 
 router.post('/single',isAuth,sendNotification);
-router.post('/all',isAuth,sendNotificationAll);
+//router.post('/all',isAuth,sendNotificationAll);
 export default router;

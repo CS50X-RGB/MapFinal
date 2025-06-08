@@ -1,6 +1,6 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import User from "../Models/user.js";
-import { multiMessaging, singleMessaging } from "../firebase.js";
+//import { multiMessaging, singleMessaging } from "../firebase.js";
 import sendNotifcationSendAll from "../utils/notificationSender.js";
 
 /*
@@ -8,7 +8,7 @@ const beamsClient = new PushNotifications({
         instanceId: "c41a756e-0c26-4252-9373-43bff3466a8b",
         secretKey: "B28F08010F5773E93A0CD71CC50B528AED7A6ACFAB2D95BAA2541B8559C2E51B",
 });
-*/
+
 export const sendNotificationAll = async (req, res) => {
    try {
       const { userIds, message } = req.body;
@@ -36,7 +36,7 @@ export const sendNotificationAll = async (req, res) => {
       });
    }
 }
-
+*/
 export const sendNotification = async (req, res) => {
    try {
       const { userId, message } = req.body;
