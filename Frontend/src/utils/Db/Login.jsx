@@ -1,10 +1,10 @@
 import axios from "axios";
-import { localUrl } from "./Resgister";
+import { baseUrl, localUrl } from "./Resgister";
 
 const LoginAxios = async (email, password) => {
   try {
     const response = await axios.post(
-      `${localUrl}/users/login`,
+      `${baseUrl}/users/login`,
       {
         email: email,
         password: password,

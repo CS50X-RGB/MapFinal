@@ -1,9 +1,9 @@
 import axios from "axios";
-import { localUrl } from "./Resgister";
+import { baseUrl, localUrl } from "./Resgister";
 
 export const handleLogout = async () => {
   try {
-    const response = await axios.get(`${localUrl}/users/logout`, {
+    const response = await axios.get(`${baseUrl}/users/logout`, {
       headers: {
         "Content-Type": "application/json",
       },

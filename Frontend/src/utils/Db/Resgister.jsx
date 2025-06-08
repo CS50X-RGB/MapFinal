@@ -15,7 +15,7 @@ const RegisterAxios = async (
 ) => {
   try {
     const response = await axios.post(
-      `${localUrl}/users/register`,
+      `${baseUrl}/users/register`,
       {
         name,
         email,

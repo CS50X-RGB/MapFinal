@@ -5,7 +5,7 @@ export const baseUrl = "https://maposhare.onrender.com/api/v1/";
 export const localUrl = "http://localhost:3005/api/v1"
 
 const instance = axios.create({
-  baseURL: localUrl,
+baseURL : baseUrl,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
