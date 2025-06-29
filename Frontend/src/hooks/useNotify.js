@@ -4,7 +4,7 @@ import { toast } from "sonner";
 export default function useNotify(userId, setMessage) {
     useEffect(() => {
         if (!userId) return; 
-        const ws = new WebSocket(`http://13.233.34.140:8082/subscribe?user_id=${userId}`);
+        const ws = new WebSocket(`http://43.204.221.101:8082/subscribe?user_id=${userId}`);
         ws.onopen = () => {
             console.log("✅ WebSocket connected");
         };
