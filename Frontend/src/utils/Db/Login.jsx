@@ -6,21 +6,29 @@ const LoginAxios = async (email, password) => {
     const response = await axios.post(
       `${baseUrl}/users/login`,
       {
-        email: email,
-        password: password,
+        email,
+        password,
       },
       {
         headers: {
           "Content-Type": "application/json",
         },
         withCredentials: true,
+        validateStatus: () => true, // ✅ prevents axios from throwing on non-2xx
       }
     );
-    console.log(response.data,"Token");
-    localStorage.setItem("Map_0_Share", response.data.token);
-    return response.data;
+
+    if (response.status === 200) {
+      console.log(response.data, "Token");
+      localStorage.setItem("Map_0_Share", response.data.token);
+      return response.data;
+    } else {
+      console.warn("Login failed:", response.data.message || "Unexpected error");
+      return null; // or return false or response.data.message based on use case
+    }
   } catch (err) {
-    return err.message;
+    console.error("Network error:", err.message);
+    return null;
   }
 };
 
