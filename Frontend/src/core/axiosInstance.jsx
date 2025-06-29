@@ -1,7 +1,6 @@
 import axios from "axios";
 
-
-export const baseUrl = "https://maposhare.onrender.com/api/v1/";
+export const baseUrl = "https://mapfinal.onrender.com/api/v1/";
 export const localUrl = "http://localhost:3005/api/v1"
 
 const instance = axios.create({
