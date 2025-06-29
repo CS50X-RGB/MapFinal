@@ -11,7 +11,7 @@ export const ForgotPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://maposhare.onrender.com/api/v1/users/forgot-password",
+        "https://mapfinal.onrender.com/api/v1/users/forgot-password",
         {
           email: email,
         },

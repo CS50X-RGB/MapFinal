@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl, localUrl } from "./Resgister";
+import { baseUrl } from "./Resgister";
 
 export const handleLogout = async () => {
   try {

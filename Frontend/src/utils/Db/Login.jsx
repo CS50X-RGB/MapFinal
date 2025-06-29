@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl, localUrl } from "./Resgister";
+import { baseUrl } from "./Resgister";
 
 const LoginAxios = async (email, password) => {
   try {
